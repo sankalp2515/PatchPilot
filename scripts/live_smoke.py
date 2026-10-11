@@ -26,7 +26,7 @@ async def main():
         for source in result["sources"]
     ]
     summary["attempt_errors"] = [attempt["error"] for attempt in result["attempts"]]
-    (ROOT / "docs" / "live-verification.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (ROOT / "docs" / "live-verification.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(summary, indent=2), flush=True)
 
 
