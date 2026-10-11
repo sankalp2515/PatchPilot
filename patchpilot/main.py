@@ -1,19 +1,19 @@
 import asyncio
 import json
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, PlainTextResponse, FileResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .agent import Agent
-from .config import Settings, ROOT
+from .config import ROOT, Settings
 from .examples import examples
 from .providers import Tools
 from .reports import markdown_report
 from .schemas import IncidentRequest
-from .store import Store, TERMINAL
+from .store import TERMINAL, Store
 
 
 def create_app(settings=None):
@@ -32,7 +32,8 @@ def create_app(settings=None):
         if tasks:
             await asyncio.gather(*tasks.values(), return_exceptions=True)
 
-    app = FastAPI(title="PatchPilot", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="PatchPilot", version="0.1.0", lifespan=lifespan, docs_url=None, redoc_url=None)
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
     app.state.store = store
 
     @app.middleware("http")
@@ -41,10 +42,14 @@ def create_app(settings=None):
             origin = request.headers.get("origin")
             expected = f"{request.url.scheme}://{request.headers.get('host', '')}"
             if origin and origin != expected:
-                return JSONResponse({"detail": "Cross-origin local-service mutations are prohibited"}, status_code=403)
+                return JSONResponse(
+                    {"detail": "Cross-origin local-service mutations are prohibited"}, status_code=403
+                )
             if request.url.path == "/api/runs":
                 if request.headers.get("content-type", "").split(";")[0] != "application/json":
-                    return JSONResponse({"detail": "Incident intake requires application/json"}, status_code=415)
+                    return JSONResponse(
+                        {"detail": "Incident intake requires application/json"}, status_code=415
+                    )
                 chunks = bytearray()
                 async for chunk in request.stream():
                     chunks.extend(chunk)
@@ -54,7 +59,9 @@ def create_app(settings=None):
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
+        )
         return response
 
     def find(run_id):
@@ -72,11 +79,16 @@ def create_app(settings=None):
 
     @app.get("/api/config")
     def config():
-        return {"name": "PatchPilot", "live_ready": bool(settings.serpapi_api_key and settings.llm_key),
-                "search_ready": bool(settings.serpapi_api_key), "model_ready": bool(settings.llm_key),
-                "provider": settings.provider, "model": settings.model,
-                "partners": {"neatlogs": "pending", "entire": "pending", "cfo_ai": "pending"},
-                "limits": {"attempts": 3, "cases": 12, "seconds": 240, "code_characters": 12000}}
+        return {
+            "name": "PatchPilot",
+            "live_ready": bool(settings.serpapi_api_key and settings.llm_key),
+            "search_ready": bool(settings.serpapi_api_key),
+            "model_ready": bool(settings.llm_key),
+            "provider": settings.provider,
+            "model": settings.model,
+            "partners": {"neatlogs": "pending", "entire": "pending", "cfo_ai": "pending"},
+            "limits": {"attempts": 3, "cases": 12, "seconds": 240, "code_characters": 12000},
+        }
 
     @app.get("/api/examples")
     def example_list():
@@ -86,16 +98,27 @@ def create_app(settings=None):
     async def create(request: IncidentRequest):
         active = [r for r in store.list() if r["status"] not in TERMINAL]
         if active:
-            raise HTTPException(409, "An investigation is already running. Wait or cancel it before starting another.")
+            raise HTTPException(
+                409, "An investigation is already running. Wait or cancel it before starting another."
+            )
         run = store.create(request.model_dump())
         launch(run["id"])
         return run
 
     @app.get("/api/runs")
     def listing():
-        return [{"id": r["id"], "title": r["input"]["title"], "vendor": r["input"]["vendor"],
-                 "mode": r["input"]["mode"], "status": r["status"], "created_at": r["created_at"],
-                 "metrics": r["metrics"]} for r in store.list()]
+        return [
+            {
+                "id": r["id"],
+                "title": r["input"]["title"],
+                "vendor": r["input"]["vendor"],
+                "mode": r["input"]["mode"],
+                "status": r["status"],
+                "created_at": r["created_at"],
+                "metrics": r["metrics"],
+            }
+            for r in store.list()
+        ]
 
     @app.get("/api/runs/{run_id}")
     def detail(run_id: str):
@@ -106,8 +129,15 @@ def create_app(settings=None):
         run = find(run_id)
         if run["status"] in TERMINAL:
             raise HTTPException(409, "Only an active investigation can be cancelled")
-        store.update(run_id, {"status": "cancelled", "phase": "cancelled", "cancel_requested": True},
-                     {"kind": "decision", "title": "Cancellation requested", "detail": "Saved artifacts are retained."})
+        store.update(
+            run_id,
+            {"status": "cancelled", "phase": "cancelled", "cancel_requested": True},
+            {
+                "kind": "decision",
+                "title": "Cancellation requested",
+                "detail": "Saved artifacts are retained.",
+            },
+        )
         if run_id in tasks:
             tasks[run_id].cancel()
         return find(run_id)
@@ -116,7 +146,10 @@ def create_app(settings=None):
     async def resume(run_id: str):
         run = find(run_id)
         if run["status"] != "interrupted":
-            raise HTTPException(409, "Only a run interrupted by a server restart can be resumed; rerun other outcomes as a new investigation")
+            raise HTTPException(
+                409,
+                "Only a run interrupted by a server restart can be resumed; rerun other outcomes as a new investigation",
+            )
         if any(r["status"] not in TERMINAL for r in store.list()):
             raise HTTPException(409, "Another investigation is running")
         store.update(run_id, {"status": "queued", "phase": "queued", "cancel_requested": False}, force=True)
@@ -126,7 +159,9 @@ def create_app(settings=None):
     @app.get("/api/runs/{run_id}/export")
     def export(run_id: str, format: str = "json"):
         run = find(run_id)
-        headers = {"Content-Disposition": f'attachment; filename="patchpilot-{run_id[:8]}.{ "md" if format == "markdown" else "json"}"'}
+        headers = {
+            "Content-Disposition": f'attachment; filename="patchpilot-{run_id[:8]}.{"md" if format == "markdown" else "json"}"'
+        }
         if format == "markdown":
             return PlainTextResponse(markdown_report(run), headers=headers)
         if format != "json":
@@ -141,7 +176,9 @@ def create_app(settings=None):
     def index():
         if (dist / "index.html").exists():
             return FileResponse(dist / "index.html")
-        return PlainTextResponse("PatchPilot API is running. Build web/ to open the workbench. API docs: /docs")
+        return PlainTextResponse(
+            "PatchPilot API is running. Build web/ to open the workbench. API specification: /openapi.json"
+        )
 
     return app
 

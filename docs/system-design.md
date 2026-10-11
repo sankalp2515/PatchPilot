@@ -6,7 +6,7 @@
 2. Planning records reproducible baseline, failure classification, targeted vendor research, evidence inspection, patch generation, verification, and bounded recovery.
 3. Baseline executes the original adapter through the restricted interpreter against immutable acceptance cases. An already passing adapter ends as `no_change`; 401/403/429-like incidents end as `needs_human` without code generation.
 4. Search uses SerpApi Google discovery with a vendor host constraint, version, and symptom. Failed transport calls have a bounded retry. Discovery URLs, query, search ID, and provenance are persisted without request keys.
-5. Context fetches at most three HTTPS pages from exact allowlisted official hosts, validates every redirect, caps response bytes, extracts visible text, and stores hashes and relevant passages. No useful fetched evidence ends as `needs_human`; snippets cannot unlock repair.
+5. Context accepts at most three sources from exact allowlisted official HTTPS hosts, validates every redirect, caps response bytes, extracts visible text, and stores hashes and relevant passages. Acquisition inspects at most three direct official candidates per query and may inspect one Stripe release index plus three related candidates. No useful fetched evidence ends as `needs_human`; snippets cannot unlock repair.
 6. LLM generates a JSON patch proposal containing code, diagnosis, supporting evidence IDs and literal quotes. Source passages and user code are delimited untrusted content. The prompt enumerates allowed Python nodes and callable methods. The server checks citation IDs and quotation membership, then validates the AST.
 7. Verification runs the patch against the same protected cases. A wrong patch produces actual observed/expected values as feedback to the next attempt. The test cases never change. Cancellation is checked between tool steps. Exhausted attempts end `unverified`.
 8. Finalization stores code, unified diff, diagnosis, citations, evidence hashes, case results, attempts, duration, usage, and limitations. JSON and Markdown exports expose the evidence chain.
@@ -19,7 +19,7 @@ States: queued -> planning -> baseline -> researching -> context -> repairing ->
 
 ## Verification implementation
 
-User/model code is parsed, never executed with Python exec/eval. A small interpreter handles literals, dictionaries/lists, indexing, assignments, conditions, bounded loops/comprehensions, arithmetic, safe JSON methods and named adapter functions. It forbids imports, dunder identifiers, arbitrary attributes/calls, classes, globals, exceptions and shell access. An operation counter caps work at 20,000 steps; outputs must be finite JSON with bounded size. This is a constrained adapter repair product, not an arbitrary-code sandbox.
+User/model code is parsed, never executed with Python exec/eval. A small interpreter handles literals, dictionaries/lists, indexing, assignments, conditions, bounded loops/comprehensions, arithmetic, safe JSON methods and a named adapter function. It forbids imports, dunder identifiers, arbitrary attributes/calls, classes, globals, exceptions and shell access. An operation counter caps work at 20,000 steps, including nested data traversal; traversal queues and mutable list growth are checked before allocation. Outputs must be finite JSON with bounded size and strict canonical comparison. Verification runs off the API event loop so local requests and cancellation remain responsive. This is a constrained adapter repair product, not an arbitrary-code sandbox.
 
 ## API
 

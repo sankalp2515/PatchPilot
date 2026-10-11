@@ -1,0 +1,13 @@
+services:
+  patchpilot:
+    build: .
+    ports:
+      - "127.0.0.1:8017:8017"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - pilot-data:/app/.data
+    restart: unless-stopped
+volumes:
+  pilot-data:

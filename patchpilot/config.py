@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -21,8 +22,9 @@ class Settings(BaseSettings):
 
     @property
     def model(self):
-        return self.llm_model or ("openai/gpt-oss-120b" if self.provider == "groq"
-                                  else "meta/llama-3.3-70b-instruct")
+        return self.llm_model or (
+            "openai/gpt-oss-120b" if self.provider == "groq" else "meta/llama-3.3-70b-instruct"
+        )
 
     @property
     def llm_key(self):

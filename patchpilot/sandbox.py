@@ -1,27 +1,108 @@
 """A bounded data transformation interpreter. Never exec/eval user or model code."""
+
 import ast
 import copy
 import json
 import math
 import operator
 
-BUILTINS = {"len": len, "str": str, "int": int, "float": float, "bool": bool, "sum": sum,
-            "min": min, "max": max, "sorted": sorted, "list": list, "dict": dict, "abs": abs,
-            "round": round, "enumerate": enumerate}
-METHODS = {dict: {"get", "keys", "values", "items"}, list: {"append", "extend", "count"},
-           str: {"lower", "upper", "strip", "startswith", "endswith", "split", "replace"}}
-ALLOWED = (ast.Module, ast.FunctionDef, ast.arguments, ast.arg, ast.Return, ast.Assign, ast.AugAssign,
-           ast.Expr, ast.If, ast.For, ast.Pass, ast.Break, ast.Continue, ast.Name, ast.Load, ast.Store,
-           ast.Constant, ast.Dict, ast.List, ast.Tuple, ast.Subscript, ast.Slice, ast.Attribute,
-           ast.Call, ast.keyword, ast.BinOp, ast.UnaryOp, ast.BoolOp, ast.Compare, ast.IfExp,
-           ast.ListComp, ast.GeneratorExp, ast.comprehension, ast.Add, ast.Sub, ast.Mult, ast.Div,
-           ast.FloorDiv, ast.Mod, ast.USub, ast.UAdd, ast.Not, ast.And, ast.Or, ast.Eq, ast.NotEq,
-           ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.In, ast.NotIn, ast.Is, ast.IsNot)
-BINARY = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
-          ast.FloorDiv: operator.floordiv, ast.Mod: operator.mod}
-COMPARE = {ast.Eq: operator.eq, ast.NotEq: operator.ne, ast.Lt: operator.lt, ast.LtE: operator.le,
-           ast.Gt: operator.gt, ast.GtE: operator.ge, ast.In: lambda a, b: a in b,
-           ast.NotIn: lambda a, b: a not in b, ast.Is: operator.is_, ast.IsNot: operator.is_not}
+BUILTINS = {
+    "len": len,
+    "str": str,
+    "int": int,
+    "float": float,
+    "bool": bool,
+    "sum": sum,
+    "min": min,
+    "max": max,
+    "sorted": sorted,
+    "list": list,
+    "dict": dict,
+    "abs": abs,
+    "round": round,
+    "enumerate": enumerate,
+}
+METHODS = {
+    dict: {"get", "keys", "values", "items"},
+    list: {"append", "extend", "count"},
+    str: {"lower", "upper", "strip", "startswith", "endswith", "split", "replace"},
+}
+ALLOWED = (
+    ast.Module,
+    ast.FunctionDef,
+    ast.arguments,
+    ast.arg,
+    ast.Return,
+    ast.Assign,
+    ast.AugAssign,
+    ast.Expr,
+    ast.If,
+    ast.For,
+    ast.Pass,
+    ast.Break,
+    ast.Continue,
+    ast.Name,
+    ast.Load,
+    ast.Store,
+    ast.Constant,
+    ast.Dict,
+    ast.List,
+    ast.Tuple,
+    ast.Subscript,
+    ast.Slice,
+    ast.Attribute,
+    ast.Call,
+    ast.keyword,
+    ast.BinOp,
+    ast.UnaryOp,
+    ast.BoolOp,
+    ast.Compare,
+    ast.IfExp,
+    ast.ListComp,
+    ast.GeneratorExp,
+    ast.comprehension,
+    ast.Add,
+    ast.Sub,
+    ast.Mult,
+    ast.Div,
+    ast.FloorDiv,
+    ast.Mod,
+    ast.USub,
+    ast.UAdd,
+    ast.Not,
+    ast.And,
+    ast.Or,
+    ast.Eq,
+    ast.NotEq,
+    ast.Lt,
+    ast.LtE,
+    ast.Gt,
+    ast.GtE,
+    ast.In,
+    ast.NotIn,
+    ast.Is,
+    ast.IsNot,
+)
+BINARY = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+}
+COMPARE = {
+    ast.Eq: operator.eq,
+    ast.NotEq: operator.ne,
+    ast.Lt: operator.lt,
+    ast.LtE: operator.le,
+    ast.Gt: operator.gt,
+    ast.GtE: operator.ge,
+    ast.In: lambda a, b: a in b,
+    ast.NotIn: lambda a, b: a not in b,
+    ast.Is: operator.is_,
+    ast.IsNot: operator.is_not,
+}
 
 
 def validate_code(code, entrypoint):
@@ -32,9 +113,17 @@ def validate_code(code, entrypoint):
     except (SyntaxError, RecursionError) as exc:
         raise ValueError("Adapter must be valid Python") from exc
     if len(tree.body) != 1 or not isinstance(tree.body[0], ast.FunctionDef):
-        raise ValueError("Supply exactly one adapter function; imports and top-level operations are prohibited")
+        raise ValueError(
+            "Supply exactly one adapter function; imports and top-level operations are prohibited"
+        )
     fn = tree.body[0]
-    if fn.name != entrypoint or len(fn.args.args) != 1 or fn.args.vararg or fn.args.kwarg or fn.decorator_list:
+    if (
+        fn.name != entrypoint
+        or len(fn.args.args) != 1
+        or fn.args.vararg
+        or fn.args.kwarg
+        or fn.decorator_list
+    ):
         raise ValueError("Adapter must match the entrypoint and accept exactly one JSON input")
     if fn.args.posonlyargs or fn.args.kwonlyargs or fn.args.defaults:
         raise ValueError("Adapter arguments cannot have defaults or extra parameters")
@@ -45,11 +134,15 @@ def validate_code(code, entrypoint):
             raise ValueError("Nested functions are prohibited")
         if isinstance(node, ast.Name) and "__" in node.id:
             raise ValueError("Dunder identifiers are prohibited")
-        if isinstance(node, ast.Attribute) and (node.attr.startswith("_") or node.attr not in set().union(*METHODS.values())):
+        if isinstance(node, ast.Attribute) and (
+            node.attr.startswith("_") or node.attr not in set().union(*METHODS.values())
+        ):
             raise ValueError("Only safe JSON methods are allowed")
         if isinstance(node, ast.Call) and not (
-            isinstance(node.func, ast.Name) and node.func.id in BUILTINS
-            or isinstance(node.func, ast.Attribute) and node.func.attr in set().union(*METHODS.values())
+            isinstance(node.func, ast.Name)
+            and node.func.id in BUILTINS
+            or isinstance(node.func, ast.Attribute)
+            and node.func.attr in set().union(*METHODS.values())
         ):
             raise ValueError("Only allowlisted JSON operations can be called")
         if isinstance(node, ast.comprehension) and node.is_async:
@@ -82,6 +175,25 @@ class Interpreter:
             raise ValueError("Output size limit exceeded")
         if isinstance(value, (int, float)) and (not math.isfinite(value) or abs(value) > 1e15):
             raise ValueError("Numeric limit exceeded")
+        return value
+
+    def json_budget(self, value):
+        stack = [(value, 0)]
+        count = 0
+        while stack:
+            self.tick()
+            item, depth = stack.pop()
+            count += 1
+            if count > 20000 or depth > 30:
+                raise ValueError("Nested data size limit exceeded")
+            if isinstance(item, dict):
+                if count + len(stack) + len(item) > 20000:
+                    raise ValueError("Nested data queue limit exceeded")
+                stack.extend((child, depth + 1) for child in item.values())
+            elif isinstance(item, (list, tuple)):
+                if count + len(stack) + len(item) > 20000:
+                    raise ValueError("Nested data queue limit exceeded")
+                stack.extend((child, depth + 1) for child in item)
         return value
 
     def assign(self, target, value, env):
@@ -164,7 +276,9 @@ class Interpreter:
         if isinstance(node, ast.BinOp):
             return self.binary(node.op, self.expr(node.left, env), self.expr(node.right, env))
         if isinstance(node, ast.UnaryOp):
-            return {ast.Not: operator.not_, ast.USub: operator.neg, ast.UAdd: operator.pos}[type(node.op)](self.expr(node.operand, env))
+            return {ast.Not: operator.not_, ast.USub: operator.neg, ast.UAdd: operator.pos}[type(node.op)](
+                self.expr(node.operand, env)
+            )
         if isinstance(node, ast.BoolOp):
             value = None
             for item in node.values:
@@ -184,6 +298,7 @@ class Interpreter:
             return self.expr(node.body if self.expr(node.test, env) else node.orelse, env)
         if isinstance(node, (ast.ListComp, ast.GeneratorExp)):
             result = []
+
             def collect(index, scope):
                 self.tick()
                 if index == len(node.generators):
@@ -195,6 +310,7 @@ class Interpreter:
                     self.assign(gen.target, item, next_scope)
                     if all(self.expr(cond, next_scope) for cond in gen.ifs):
                         collect(index + 1, next_scope)
+
             collect(0, dict(env))
             return self.bounded(result)
         if isinstance(node, ast.Call):
@@ -205,6 +321,8 @@ class Interpreter:
             if isinstance(node.func, ast.Name):
                 if kwargs:
                     raise ValueError("Builtin keyword arguments are prohibited")
+                for argument in args:
+                    self.json_budget(argument)
                 value = BUILTINS[node.func.id](*args)
                 if node.func.id == "enumerate":
                     value = list(value)
@@ -212,7 +330,15 @@ class Interpreter:
                 obj = self.expr(node.func.value, env)
                 if node.func.attr not in METHODS.get(type(obj), set()):
                     raise ValueError("Method unavailable on this JSON value")
-                if node.func.attr == "replace" and len(args) >= 2 and len(str(obj)) * max(1, len(str(args[1]))) > 100000:
+                if node.func.attr == "extend" and args and len(obj) + len(args[0]) > 100000:
+                    raise ValueError("List growth limit exceeded")
+                if node.func.attr == "append" and len(obj) >= 100000:
+                    raise ValueError("List growth limit exceeded")
+                if (
+                    node.func.attr == "replace"
+                    and len(args) >= 2
+                    and len(str(obj)) * max(1, len(str(args[1]))) > 100000
+                ):
                     raise ValueError("Output size limit exceeded")
                 value = getattr(obj, node.func.attr)(*args, **kwargs)
                 if node.func.attr in {"keys", "values", "items"}:
@@ -225,8 +351,10 @@ def verify(code, entrypoint, cases):
     try:
         fn = validate_code(code, entrypoint)
     except ValueError as exc:
-        return [{"name": c["name"], "passed": False, "expected": c["expected"], "actual": None,
-                 "error": str(exc)} for c in cases]
+        return [
+            {"name": c["name"], "passed": False, "expected": c["expected"], "actual": None, "error": str(exc)}
+            for c in cases
+        ]
     results = []
     for case in cases:
         try:
@@ -237,13 +365,28 @@ def verify(code, entrypoint, cases):
                 actual = None
             except Returned as value:
                 actual = value.value
-            serialized = json.dumps(actual, allow_nan=False)
+            interpreter.json_budget(actual)
+            serialized = json.dumps(actual, allow_nan=False, sort_keys=True)
             if len(serialized) > 100000:
                 raise ValueError("Output size limit exceeded")
             actual = json.loads(serialized)
-            results.append({"name": case["name"], "passed": actual == case["expected"],
-                            "expected": case["expected"], "actual": actual, "error": ""})
+            results.append(
+                {
+                    "name": case["name"],
+                    "passed": serialized == json.dumps(case["expected"], allow_nan=False, sort_keys=True),
+                    "expected": case["expected"],
+                    "actual": actual,
+                    "error": "",
+                }
+            )
         except Exception as exc:
-            results.append({"name": case["name"], "passed": False, "expected": case["expected"],
-                            "actual": None, "error": f"{type(exc).__name__}: {str(exc)[:300]}"})
+            results.append(
+                {
+                    "name": case["name"],
+                    "passed": False,
+                    "expected": case["expected"],
+                    "actual": None,
+                    "error": f"{type(exc).__name__}: {str(exc)[:300]}",
+                }
+            )
     return results

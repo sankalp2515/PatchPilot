@@ -29,39 +29,39 @@
 ### Task 1: Contracts, persistence and restricted verification
 Files: `patchpilot/schemas.py`, `config.py`, `store.py`, `sandbox.py`; tests `tests/test_core.py`.
 Interfaces: `IncidentRequest`, `Store.create/get/list/update`, `verify(code, entrypoint, cases) -> list[dict]`.
-- [ ] Write tests for immutable semantic cases, malicious code, operation budget, secret rejection and persistence.
-- [ ] Run pytest and observe feature-missing failures.
-- [ ] Implement bounded schemas, transactional store, configuration and AST interpreter.
-- [ ] Run the core suite and commit verified behavior.
+- [x] Write tests for immutable semantic cases, malicious code, operation budget, secret rejection and persistence.
+- [x] Run pytest and observe feature-missing failures.
+- [x] Implement bounded schemas, transactional store, configuration and AST interpreter.
+- [x] Run the core suite and commit verified behavior.
 
 ### Task 2: Evidence and provider tools
 Files: `providers.py`, `examples.py`; tests `tests/test_providers.py`.
 Interfaces: async `research(request, emit) -> list[dict]`, async `propose(request, evidence, feedback, emit) -> dict`.
-- [ ] Test search provenance, exact-host filtering, redirect boundaries, snippets-only rejection and quote validation.
-- [ ] Observe missing provider behavior then implement live Groq/NVIDIA and SerpApi adapters.
-- [ ] Add transparent recorded Stripe replay fixtures and safety examples.
-- [ ] Run provider tests and a bounded live smoke check; commit.
+- [x] Test search provenance, exact-host filtering, redirect boundaries, snippets-only rejection and quote validation.
+- [x] Observe missing provider behavior then implement live Groq/NVIDIA and SerpApi adapters.
+- [x] Add transparent recorded Stripe replay fixtures and safety examples.
+- [x] Run provider tests and a bounded live smoke check; commit.
 
 ### Task 3: Durable agent and API
 Files: `agent.py`, `main.py`, `observability.py`; tests `tests/test_agent.py`, `tests/test_api.py`.
 Interfaces: async `Agent.run(id)`, create/list/detail/cancel/resume/export REST endpoints.
-- [ ] Test successful repair, failed first patch/recovery, no evidence, auth refusal, already passing input and cancellation.
-- [ ] Implement state machine, bounded retries, metrics, trace events and restart recovery.
-- [ ] Test API validation, same-origin mutations, safe configuration and exports.
-- [ ] Run the full backend suite and commit.
+- [x] Test successful repair, failed first patch/recovery, no evidence, auth refusal, already passing input and cancellation.
+- [x] Implement state machine, bounded retries, metrics, trace events and restart recovery.
+- [x] Test API validation, same-origin mutations, safe configuration and exports.
+- [x] Run the full backend suite and commit.
 
 ### Task 4: React workbench
 Files: `web/src/App.tsx`, feature components, `api.ts`, `styles.css`; tests `web/src/App.test.tsx`.
 Interfaces: typed API run models and polling; no credentials in browser.
-- [ ] Test example loading, incident submission, loading/error states and result panels.
-- [ ] Implement responsive navigation, intake editor, timeline, evidence, diff, case results, integrations and export.
-- [ ] Run Vitest, TypeScript and production build; inspect desktop/mobile browser screenshots.
-- [ ] Exercise real browser end-to-end replay; commit.
+- [x] Test example loading, incident submission, loading/error states and result panels.
+- [x] Implement responsive navigation, intake editor, timeline, evidence, diff, case results, integrations and export.
+- [x] Run Vitest, TypeScript and production build; inspect desktop/mobile browser screenshots.
+- [x] Exercise real browser end-to-end replay; commit.
 
 ### Task 5: Handoff and whole-system verification
 Files: `scripts/*.ps1`, `README.md`, Dockerfile, `docs/testing.md`, `docs/morning-integrations.md`, `docs/economics.md`.
-- [ ] Provide one-command setup/start/stop and sanitized real-data example.
-- [ ] Run live provider repair and save sanitized evidence/results.
-- [ ] Run all suites, security boundary cases and browser workflows.
-- [ ] Request fresh independent review, repair important findings, record limitations.
-- [ ] Leave the app running, mark plan status, and deliver local URL and guide.
+- [x] Provide one-command setup/start/stop and sanitized real-data example.
+- [x] Run live provider repair and save sanitized evidence/results.
+- [x] Run all suites, security boundary cases and browser workflows.
+- [x] Request fresh independent review, repair important findings, record limitations.
+- [x] Leave the app running, mark plan status, and deliver local URL and guide.

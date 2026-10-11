@@ -1,14 +1,15 @@
 import json
 import sqlite3
 import uuid
-from datetime import datetime, timezone
+from contextlib import contextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 
 TERMINAL = {"verified", "no_change", "needs_human", "unverified", "failed", "cancelled", "interrupted"}
 
 
 def now():
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class Store:
@@ -19,16 +20,40 @@ class Store:
             db.execute("PRAGMA journal_mode=WAL")
             db.execute("CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, updated TEXT, data TEXT)")
 
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.path, timeout=15)
+        connection = sqlite3.connect(self.path, timeout=15)
+        try:
+            yield connection
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            connection.close()
 
     def create(self, request):
-        run = {"id": uuid.uuid4().hex, "created_at": now(), "updated_at": now(), "status": "queued",
-               "phase": "queued", "input": request, "plan": [], "events": [], "sources": [],
-               "attempts": [], "baseline": [], "verification": [], "proposed_code": "", "diff": "",
-               "diagnosis": "", "citations": [], "limitations": [],
-               "metrics": {"search_calls": 0, "model_calls": 0, "tokens": 0, "elapsed_seconds": 0},
-               "cancel_requested": False}
+        run = {
+            "id": uuid.uuid4().hex,
+            "created_at": now(),
+            "updated_at": now(),
+            "status": "queued",
+            "phase": "queued",
+            "input": request,
+            "plan": [],
+            "events": [],
+            "sources": [],
+            "attempts": [],
+            "baseline": [],
+            "verification": [],
+            "proposed_code": "",
+            "diff": "",
+            "diagnosis": "",
+            "citations": [],
+            "limitations": [],
+            "metrics": {"search_calls": 0, "model_calls": 0, "tokens": 0, "elapsed_seconds": 0},
+            "cancel_requested": False,
+        }
         with self.connect() as db:
             db.execute("INSERT INTO runs VALUES (?, ?, ?)", (run["id"], run["updated_at"], json.dumps(run)))
         return run
@@ -56,12 +81,20 @@ class Store:
             if event:
                 data["events"].append({"at": now(), **event})
             data["updated_at"] = now()
-            db.execute("UPDATE runs SET updated=?, data=? WHERE id=?",
-                       (data["updated_at"], json.dumps(data), run_id))
+            db.execute(
+                "UPDATE runs SET updated=?, data=? WHERE id=?", (data["updated_at"], json.dumps(data), run_id)
+            )
         return data
 
     def interrupt_incomplete(self):
         for run in self.list():
             if run["status"] not in TERMINAL:
-                self.update(run["id"], {"status": "interrupted", "phase": "interrupted"},
-                            {"kind": "recovery", "title": "Server restarted", "detail": "Resume this investigation to continue from saved evidence and attempts."})
+                self.update(
+                    run["id"],
+                    {"status": "interrupted", "phase": "interrupted"},
+                    {
+                        "kind": "recovery",
+                        "title": "Server restarted",
+                        "detail": "Resume this investigation to continue from saved evidence and attempts.",
+                    },
+                )

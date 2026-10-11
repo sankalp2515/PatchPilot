@@ -1,9 +1,10 @@
 import pytest
-from patchpilot.config import Settings
-from patchpilot.store import Store
-from patchpilot.providers import Tools
-from patchpilot.examples import examples
+
 from patchpilot.agent import Agent
+from patchpilot.config import Settings
+from patchpilot.examples import examples
+from patchpilot.providers import Tools
+from patchpilot.store import Store
 
 
 async def run_example(tmp_path, index=0, **changes):
@@ -44,8 +45,11 @@ async def test_abstains_when_evidence_missing_or_auth_failure(tmp_path, index):
 
 @pytest.mark.asyncio
 async def test_already_passing_adapter_does_not_call_providers(tmp_path):
-    run = await run_example(tmp_path, source_code="def normalize_invoice(x):\n    return []",
-                            cases=[{"name": "works", "input": {}, "expected": []}])
+    run = await run_example(
+        tmp_path,
+        source_code="def normalize_invoice(x):\n    return []",
+        cases=[{"name": "works", "input": {}, "expected": []}],
+    )
     assert run["status"] == "no_change"
     assert not run["sources"] and not run["attempts"]
 
@@ -73,3 +77,35 @@ def test_restart_preserves_evidence_and_marks_run_interrupted(tmp_path):
     store.interrupt_incomplete()
     assert store.get(run["id"])["status"] == "interrupted"
     assert store.get(run["id"])["sources"] == [{"id": "s1"}]
+
+
+@pytest.mark.asyncio
+async def test_resume_finalizes_saved_passing_last_attempt_without_new_model_call(tmp_path):
+    from patchpilot.examples import REPAIR_CODE
+    from patchpilot.sandbox import verify
+
+    store = Store(tmp_path / "runs.db")
+    tools = Tools(Settings(_env_file=None))
+    request = examples()[0] | {"mode": "replay", "max_attempts": 1}
+    run = store.create(request)
+    sources = await tools.research(request, lambda *args: None)
+    proposal = await tools.propose(request, sources, [], lambda *args: None)
+    results = verify(REPAIR_CODE, request["entrypoint"], request["cases"])
+    store.update(
+        run["id"],
+        {
+            "status": "verifying",
+            "sources": sources,
+            "proposed_code": REPAIR_CODE,
+            "diagnosis": proposal["diagnosis"],
+            "citations": proposal["citations"],
+            "verification": results,
+            "attempts": [{"number": 1, "code": REPAIR_CODE, "results": results, "error": ""}],
+        },
+    )
+    store.interrupt_incomplete()
+    await Agent(store, tools).run(run["id"])
+    final = store.get(run["id"])
+    assert final["status"] == "verified"
+    assert len(final["attempts"]) == 1
+    assert any("Saved passing" in event["title"] for event in final["events"])

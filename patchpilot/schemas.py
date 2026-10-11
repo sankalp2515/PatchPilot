@@ -1,10 +1,15 @@
 import json
 import re
 from typing import Any, Literal
+
 from pydantic import BaseModel, Field, model_validator
 
-SECRET_KEYS = re.compile(r"^(api[_-]?key|authorization|password|secret|access[_-]?token|client[_-]?secret)$", re.I)
-SECRET_VALUE = re.compile(r"(?:sk_(?:live|test)_[A-Za-z0-9]{12,}|gsk_[A-Za-z0-9]{20,}|nvapi-[A-Za-z0-9]{20,})")
+SECRET_KEYS = re.compile(
+    r"^(api[_-]?key|authorization|password|secret|access[_-]?token|client[_-]?secret)$", re.I
+)
+SECRET_VALUE = re.compile(
+    r"(?:sk_(?:live|test)_[A-Za-z0-9]{12,}|gsk_[A-Za-z0-9]{20,}|nvapi-[A-Za-z0-9]{20,})"
+)
 
 
 def check_secrets(value):
@@ -42,7 +47,7 @@ class IncidentRequest(BaseModel):
     @model_validator(mode="after")
     def protect_input(self):
         data = self.model_dump()
-        if len(json.dumps(data)) > 100000:
+        if len(json.dumps(data, allow_nan=False)) > 100000:
             raise ValueError("Incident JSON exceeds the 100,000 character limit")
         check_secrets(data)
         if "__" in self.entrypoint:

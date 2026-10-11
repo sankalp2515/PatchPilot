@@ -1,0 +1,105 @@
+{
+  "id": "ec7608c1f67d45ca870b3e0bd975e061",
+  "status": "verified",
+  "diagnosis": "The upgrade to version 2025-03-31.basil removed the top\u2011level `payment_intent` field from the Invoice object, causing a KeyError when the old code accessed `invoice[\"payment_intent\"]`. The new API exposes payment information via the `invoice.payments` array, where each entry contains a nested `payment` object. The adapter must iterate over `invoice[\"payments\"][\"data\"]`, filter for entries where `payment[\"type\"]` is \"payment_intent\", and collect non\u2011null `payment_intent` IDs.",
+  "metrics": {
+    "search_calls": 2,
+    "model_calls": 1,
+    "tokens": 2294,
+    "elapsed_seconds": 6.05
+  },
+  "verification": [
+    {
+      "name": "Single payment",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001"
+        ]
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001"
+        ]
+      },
+      "error": ""
+    },
+    {
+      "name": "Multiple payments",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001",
+          "pi_002"
+        ]
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001",
+          "pi_002"
+        ]
+      },
+      "error": ""
+    },
+    {
+      "name": "No payments yet",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    },
+    {
+      "name": "Other payment type",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    },
+    {
+      "name": "Missing payment pointer",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    }
+  ],
+  "limitations": [
+    "Verified only against the supplied acceptance cases and the restricted adapter interpreter.",
+    "This is a proposed patch; no repository, production endpoint or payment system was modified.",
+    "Live SerpApi discovery and model generation were used; historical response fixtures are local test data."
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Adds support for multiple (partial) payments on invoices",
+      "url": "https://docs.stripe.com/changelog/basil/2025-03-31/add-support-for-multiple-partial-payments-on-invoices.md",
+      "provenance": "serpapi_live_fetched",
+      "sha256": "8e20a1109993b835d74d8c2e6e771c13b8b634c695c4f1fa1c1544dd97bd3045"
+    }
+  ],
+  "attempt_errors": [
+    ""
+  ]
+}
