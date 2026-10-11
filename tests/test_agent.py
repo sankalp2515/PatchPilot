@@ -1,0 +1,75 @@
+import pytest
+from patchpilot.config import Settings
+from patchpilot.store import Store
+from patchpilot.providers import Tools
+from patchpilot.examples import examples
+from patchpilot.agent import Agent
+
+
+async def run_example(tmp_path, index=0, **changes):
+    store = Store(tmp_path / "runs.db")
+    request = examples()[index] | {"mode": "replay"} | changes
+    run = store.create(request)
+    await Agent(store, Tools(Settings(_env_file=None))).run(run["id"])
+    return store.get(run["id"])
+
+
+@pytest.mark.asyncio
+async def test_end_to_end_repair_is_scoped_and_has_evidence(tmp_path):
+    run = await run_example(tmp_path)
+    assert run["status"] == "verified"
+    assert all(case["passed"] for case in run["verification"])
+    assert not all(case["passed"] for case in run["baseline"])
+    assert run["diff"] and run["citations"] and run["limitations"]
+    assert run["metrics"]["search_calls"] == 0
+
+
+@pytest.mark.asyncio
+async def test_incomplete_first_patch_recovers_without_changing_cases(tmp_path):
+    run = await run_example(tmp_path, 1)
+    assert run["status"] == "verified"
+    assert len(run["attempts"]) == 2
+    assert any(not case["passed"] for case in run["attempts"][0]["results"])
+    assert run["input"]["cases"] == examples()[1]["cases"]
+    assert any(event["kind"] == "recovery" for event in run["events"])
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("index", [2, 3])
+async def test_abstains_when_evidence_missing_or_auth_failure(tmp_path, index):
+    run = await run_example(tmp_path, index)
+    assert run["status"] == "needs_human"
+    assert run["proposed_code"] == ""
+
+
+@pytest.mark.asyncio
+async def test_already_passing_adapter_does_not_call_providers(tmp_path):
+    run = await run_example(tmp_path, source_code="def normalize_invoice(x):\n    return []",
+                            cases=[{"name": "works", "input": {}, "expected": []}])
+    assert run["status"] == "no_change"
+    assert not run["sources"] and not run["attempts"]
+
+
+@pytest.mark.asyncio
+async def test_cancelled_run_cannot_be_overwritten(tmp_path):
+    store = Store(tmp_path / "runs.db")
+    run = store.create(examples()[0] | {"mode": "replay"})
+    store.update(run["id"], {"status": "cancelled", "cancel_requested": True})
+    await Agent(store, Tools(Settings(_env_file=None))).run(run["id"])
+    assert store.get(run["id"])["status"] == "cancelled"
+
+
+@pytest.mark.asyncio
+async def test_exhausted_repair_budget_does_not_claim_success(tmp_path):
+    run = await run_example(tmp_path, 1, max_attempts=1)
+    assert run["status"] == "unverified"
+    assert len(run["attempts"]) == 1
+
+
+def test_restart_preserves_evidence_and_marks_run_interrupted(tmp_path):
+    store = Store(tmp_path / "runs.db")
+    run = store.create(examples()[0])
+    store.update(run["id"], {"status": "researching", "sources": [{"id": "s1"}]})
+    store.interrupt_incomplete()
+    assert store.get(run["id"])["status"] == "interrupted"
+    assert store.get(run["id"])["sources"] == [{"id": "s1"}]
