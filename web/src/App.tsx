@@ -19,6 +19,7 @@ import {
   Workflow,
   X,
 } from "lucide-react";
+import Landing from "./Landing";
 import { api, post } from "./api";
 import {
   terminal,
@@ -36,19 +37,19 @@ function IntegrationPage({ config }: { config: Config | null }) {
       "neatlogs",
       "Observe and improve",
       "Connect the SDK to model, search and verification spans. Capture a failed run, improve the agent, and compare real traces.",
-      "https://docs.neatlogs.com",
+      "https://github.com/sankalp2515/PatchPilot/blob/main/docs/evidence/neatlogs-improvement.json",
     ],
     [
       "Entire",
       "Preserve development context",
-      "Enable repository checkpoints during coding sessions. Retain the context and decisions behind development changes.",
-      "https://entire.io",
+      "A real design-review session is retained in an Entire checkpoint. The session was attached retrospectively after hook setup.",
+      "https://github.com/sankalp2515/PatchPilot/blob/main/docs/evidence/entire-checkpoint.json",
     ],
     [
       "cfo.ai",
       "Plan a viable business",
-      "Use measured model, search and review costs to build pricing, revenue and runway scenarios. Export the resulting business plan.",
-      "https://cfo.ai/neathacks",
+      "Three editable launch scenarios cover pricing, cost, revenue and runway. Customer and financial inputs are clearly labelled hypotheses.",
+      "https://github.com/sankalp2515/PatchPilot/blob/main/docs/economics.md",
     ],
   ];
   return (
@@ -56,10 +57,11 @@ function IntegrationPage({ config }: { config: Config | null }) {
       <header className="page-heading">
         <div>
           <span className="small-label">Integrations</span>
-          <h1>Morning setup</h1>
+          <h1>Tools and project evidence</h1>
           <p>
-            The core agent runs now. Partner account-backed evidence is the next
-            step.
+            Bundled receipts establish this project's sponsor usage. Your
+            current provider configuration is shown below; a new installation
+            needs its own accounts for live use.
           </p>
         </div>
       </header>
@@ -90,12 +92,17 @@ function IntegrationPage({ config }: { config: Config | null }) {
           <section className="panel partner" key={name}>
             <div className="partner-top">
               <span className="partner-name">{name}</span>
-              <span className="pending-tag">Pending</span>
+              <span className="pending-tag">
+                Project evidence:{" "}
+                {config?.partners?.[
+                  name === "cfo.ai" ? "cfo_ai" : name.toLowerCase()
+                ] || "not configured"}
+              </span>
             </div>
             <h2>{title}</h2>
             <p>{detail}</p>
             <a href={url} target="_blank" rel="noreferrer">
-              Open setup resource
+              Inspect project evidence
               <ArrowRight size={15} />
             </a>
           </section>
@@ -104,23 +111,20 @@ function IntegrationPage({ config }: { config: Config | null }) {
       <section className="setup-note">
         <ShieldCheck size={22} />
         <div>
-          <h3>Preparation is ready; compliance needs real artifacts</h3>
+          <h3>Configuration and evidence are different</h3>
           <p>
-            Local trace exports, checkpoints in Git, and economics assumptions
-            are useful starting points. They are not substitutes for neatlogs
-            traces, Entire checkpoints, or a cfo.ai business plan.
-          </p>
-          <p>
-            See <code>docs/morning-integrations.md</code> for the setup and
-            verification checklist.
+            Configured keys enable attempts. Verified traces, repository
+            checkpoints, and saved financial scenarios establish the individual
+            tool outcomes. Entire and cfo.ai support development and business
+            planning; they do not verify an adapter.
           </p>
         </div>
-      </section>
+      </section>{" "}
     </>
   );
 }
 
-export default function App() {
+function Workspace() {
   const [retryGeneration, setRetryGeneration] = useState(0);
   const [page, setPage] = useState<"runs" | "examples" | "integrations">(
       "runs",
@@ -609,5 +613,14 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return window.location.pathname === "/app" ||
+    window.location.pathname.startsWith("/app/") ? (
+    <Workspace />
+  ) : (
+    <Landing />
   );
 }

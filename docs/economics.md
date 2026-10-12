@@ -1,30 +1,46 @@
-# PatchPilot Business Model Inputs
+# PatchPilot business plan
 
-This is a preparation worksheet for cfo.ai, not a completed cfo.ai plan or validated demand. The proposed buyer is an integration engineer or a small SaaS team with recurring documented API migration incidents. The purchase hypothesis is reduced investigation and review time per correctly verified repair.
+Created and read back through the authenticated **cfo.ai MCP**, in the separate `PatchPilot launch hypotheses` scenario. [Open the saved economics table](https://app.cfo.ai/s/p_AQKFqAYkZDJiMDlhNTEtZTAzNS00NmFiLTkwNDktY2I1MDc4NGZiMjZiJGZiMDNiNGFkLTY1NjgtNDZjZS1iMzlhLWMzNjBkNzc3ODgxZg). The [saved-model receipt](evidence/cfo-model.json) retains formulas and returned values: 45 selected cells, 44 nonempty cells, zero formula errors. Growth runway is intentionally null because that case has no positive burn.
 
-## Measured usage
+## Buyer and problem
 
-The initial successful live smoke used two search queries, one model proposal and 2,229 reported tokens, completing in 5.91 seconds. Subsequent final verification may have different counts; the latest authoritative summary is `live-verification.json`, and complete history is in the local run exports. Search/model counters initially measured logical operations; transport retries must be included when calculating billed usage. No provider price has been assumed to be verified from account billing.
+SaaS integration engineers maintain adapters around changing APIs. A plausible repair can pass five known cases while mishandling expanded payment objects. PatchPilot provides a more inspectable research-and-review workflow: official version evidence, literal quotations, protected acceptance cases, independent counterexamples and a portable diff/report. No paying customers, validated demand or measured time savings are claimed.
 
-## Pricing experiments to validate
+## Offering and route to market
 
-| Hypothesis | Proposed experiment |
-| --- | --- |
-| Individual plan | Test $19/month with a small included investigation allowance. |
-| Team plan | Test $79/month for shared review artifacts and a larger allowance. |
-| Usage overage | Charge per additional investigation only after cost and value are established. |
-| Primary value | Ask engineers to compare review minutes and incident resolution time with their existing workflow. |
+The shipped product is a free local prototype with bring-your-own keys. **$19/month individual** and **$79/month team** are pricing experiments, not implemented paid plans. Base average monthly price of $34 equals a hypothetical mix of 30 individual and 10 team buyers. Other average prices represent different mix/discount assumptions.
 
-These are illustrative test prices, not actual revenue, traction or commitments.
+Reach integration consultants and SaaS teams through developer communities and public migration walkthroughs. Interview ten engineers, observe existing review work, offer a small reviewed pilot, and validate retention and conversion before charging. A hosted team offering requires additional authentication, tenant isolation and operations.
 
-## Cost model
+## Editable cfo.ai cases
 
-For each investigation: search requests x account search price + input/output tokens x selected model rates + computation/storage + observability + allocated reviewer/support cost. Use current actual account rates. Total-token reporting alone cannot distinguish input/output prices; instrument provider usage before publishing a margin forecast.
+All amounts are **USD assumptions**. Customer counts, repair rates, provider/compute cost, review costs, operating expenses and opening cash are illustrative hypotheses, not bank balances, revenue, invoices or an independent accuracy study.
 
-Track the verified repair rate, abstention rate, false verified verdicts, manual reviewer minutes, repeated incidents and monthly investigations per customer. Cost per useful repair = total investigation cost / correctly verified repair count. Include failed and abstaining runs in total cost.
+| Monthly quantity | Conservative | Base | Growth |
+|---|---:|---:|---:|
+| Paying customers | 10 | 40 | 100 |
+| Average price | $25 | $34 | $40 |
+| Investigations/customer | 30 | 20 | 15 |
+| Useful repair rate | 35% | 60% | 75% |
+| Search/inference/compute per investigation | $0.12 | $0.08 | $0.08 |
+| Review cost per useful repair | $2.00 | $1.00 | $0.50 |
+| Revenue | $250 | $1,360 | $4,000 |
+| Direct costs including review | $246 | $544 | $682.50 |
+| Gross profit | $4 | $816 | $3,317.50 |
+| Gross margin | 1.6% | 60% | 82.94% |
+| Operating expense | $2,000 | $2,000 | $2,000 |
+| Net burn | $1,996 | $1,184 | $0 |
+| Hypothetical opening cash | $10,000 | $10,000 | $10,000 |
+| Static runway | 5.01 months | 8.45 months | No positive burn |
 
-## Scenarios to build in cfo.ai
+The conservative case exposes review economics. Base reviewers cost $480 versus $64 in assumed search/inference/compute, so lowering model price alone does little. Growth is optimistic and excludes acquisition expansion. Add acquisition, support, churn, taxes and fees before treating this as a funded plan.
 
-Conservative: few paying teams, higher review costs and low successful repair rate. Base: modest paid adoption and measured incident volume. Growth: more customers plus proportionate inference, search and support expense. Revenue = paying customers x average realized monthly price. Gross margin = (revenue - direct costs) / revenue. Runway = available cash / positive monthly net burn. Treat every customer, churn and acquisition assumption as a hypothesis.
+## Formula logic
 
-Runway needs real starting cash and monthly operating expense inputs from the user. Do not invent them or claim an account-backed cfo.ai export before one exists.
+Revenue = customers × price. Investigations = customers × volume. Direct costs = investigations × (provider/compute cost + useful repair rate × review cost). Gross margin = gross profit / revenue. Net burn = max(operating expense − gross profit, 0). Static runway = cash / positive burn; null otherwise. cfo.ai retains these dependencies. Edit an input to explore consequences.
+
+Cost per useful repair includes failed investigations: provider/compute cost divided by useful repair rate, plus review cost (base $1.13 under these assumptions). Absent billing measurements remain absent. [Latest live usage](live-verification.json) records provider calls, tokens and runtime, not actual charges.
+
+## Validation gates
+
+Measure reviewed correctness, abstention, counterexample failures, reviewer minutes, repeat use and pilot conversion. Replace assumed cost with actual account rates and billable usage. Expand held-out migrations beyond Stripe. Keep results scoped and human-reviewed; do not auto-apply patches to payment systems.

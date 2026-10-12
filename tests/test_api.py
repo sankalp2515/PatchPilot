@@ -36,7 +36,7 @@ def test_api_config_never_returns_credentials(tmp_path):
     with TestClient(create_app(settings), base_url="http://127.0.0.1") as api:
         text = api.get("/api/config").text
         assert "test-sensitive-key" not in text
-        assert "pending" in text
+        assert set(api.get("/api/config").json()["partners"]) == {"neatlogs", "entire", "cfo_ai"}
 
 
 def test_cross_origin_mutation_is_rejected(tmp_path):

@@ -1,0 +1,177 @@
+{
+  "experiment": "Synthetic same-contract evaluation of preserved pre-upgrade adapter vs enhanced replay agent; not a benchmark of real-world accuracy or model performance.",
+  "baseline_commit": "2c972e4d16d2d17036d0fc684372796357dd2f5d",
+  "before": {
+    "trace_id": "3cdf64da27aa63286f53adb00c7bbfa7",
+    "acceptance_passed": 5,
+    "acceptance_total": 5,
+    "audit_passed": 6,
+    "audit_total": 20,
+    "readback": {
+      "http_status": 200,
+      "exact_trace_id": "3cdf64da27aa63286f53adb00c7bbfa7",
+      "status": "success",
+      "span_count": 3,
+      "hierarchy_valid": true,
+      "spans": [
+        {
+          "name": "verification.acceptance",
+          "type": "tool_call",
+          "id": "9b292b4d0454310b",
+          "parent": "d1a97350f6ff1192",
+          "metrics": {
+            "passed": 5,
+            "total": 5
+          }
+        },
+        {
+          "name": "verification.audit",
+          "type": "tool_call",
+          "id": "21234029859e05f6",
+          "parent": "d1a97350f6ff1192",
+          "metrics": {
+            "audit_passed": 6,
+            "audit_total": 20,
+            "outcome": "failed"
+          }
+        },
+        {
+          "name": "agent.before.counterexample_audit",
+          "type": "workflow",
+          "id": "d1a97350f6ff1192",
+          "parent": null,
+          "metrics": {
+            "audit_passed": 6,
+            "audit_total": 20,
+            "mode": "replay",
+            "passed": 5,
+            "status": "evaluated",
+            "total": 5
+          }
+        }
+      ],
+      "private_response_saved": true
+    }
+  },
+  "after": {
+    "run_id": "9b5d09463ea4438982b7c491e813f687",
+    "trace_id": "e2567d358cb520ce3938f29cbbcc2f34",
+    "status": "verified",
+    "acceptance_passed": 5,
+    "acceptance_total": 5,
+    "audit_passed": 20,
+    "audit_total": 20,
+    "attempts": 2,
+    "proof_hash": "fd85482b481f935785d76f4b6937d1740a2f193e18643dbeb7dd140a1fd50af7",
+    "readback": {
+      "http_status": 200,
+      "exact_trace_id": "e2567d358cb520ce3938f29cbbcc2f34",
+      "status": "success",
+      "span_count": 9,
+      "hierarchy_valid": true,
+      "spans": [
+        {
+          "name": "verification.audit",
+          "type": "tool_call",
+          "id": "e0145db6f7709e72",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "audit_passed": 2,
+            "audit_total": 20,
+            "outcome": "failed"
+          }
+        },
+        {
+          "name": "verification.baseline",
+          "type": "tool_call",
+          "id": "741ef8e369109408",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "outcome": "failed",
+            "passed": 0,
+            "total": 5
+          }
+        },
+        {
+          "name": "verification.acceptance",
+          "type": "tool_call",
+          "id": "81d02a0b3c6b0067",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "outcome": "failed",
+            "passed": 2,
+            "total": 5
+          }
+        },
+        {
+          "name": "tools.propose",
+          "type": "tool_call",
+          "id": "3b370bf7215afcba",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "attempt": 1,
+            "outcome": "generated",
+            "recovery": false
+          }
+        },
+        {
+          "name": "tools.research",
+          "type": "tool_call",
+          "id": "4bcaa6824edd5c1b",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "outcome": "found",
+            "source_count": 1
+          }
+        },
+        {
+          "name": "agent.run",
+          "type": "workflow",
+          "id": "08197c2c02c2dff2",
+          "parent": null,
+          "metrics": {
+            "mode": "replay",
+            "passed": 5,
+            "recovery": false,
+            "status": "verified",
+            "total": 5
+          }
+        },
+        {
+          "name": "verification.acceptance",
+          "type": "tool_call",
+          "id": "faba5108e0f9c1be",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "outcome": "passed",
+            "passed": 5,
+            "total": 5
+          }
+        },
+        {
+          "name": "tools.propose",
+          "type": "tool_call",
+          "id": "849067e40f004c61",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "attempt": 2,
+            "outcome": "generated",
+            "recovery": true
+          }
+        },
+        {
+          "name": "verification.audit",
+          "type": "tool_call",
+          "id": "4f06b34c76f63c4f",
+          "parent": "08197c2c02c2dff2",
+          "metrics": {
+            "audit_passed": 20,
+            "audit_total": 20,
+            "outcome": "passed"
+          }
+        }
+      ],
+      "private_response_saved": true
+    }
+  }
+}

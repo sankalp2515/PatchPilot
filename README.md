@@ -1,88 +1,139 @@
+<div align="center">
+
 # PatchPilot
+### From broken adapter to evidence-backed repair.
 
-An AI agent that investigates a failing API adapter, discovers version-specific vendor evidence with SerpApi, proposes a minimal Python repair, and verifies it against protected acceptance cases.
+A local AI agent that investigates API migrations, proposes a minimal Python patch, and packages the evidence with its tested scope.
 
-[Source repository](https://github.com/sankalp2515/PatchPilot)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![React + TypeScript](https://img.shields.io/badge/React-TypeScript-3178C6)
+[![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**Open the running workbench: http://127.0.0.1:8017**
+[Get started](#get-started) · [User flows](docs/user-flows.md) · [Architecture](docs/architecture.md) · [API guide](docs/api-guide.md) · [Demo scripts](docs/demo-scripts.md)
 
-![PatchPilot live repair workbench](docs/assets/live-repair-desktop.png)
+</div>
 
-## Try it now
+An integration can break when a vendor moves one field. Finding the replacement still requires version-specific documentation, careful handling of response shapes, and tests for the output your application expects. PatchPilot keeps the investigation together: baseline failure → SerpApi discovery → fetched official evidence → cited patch → acceptance checks → scoped repair proof.
 
-1. Open the workbench and choose **Recovery from an incomplete repair**. Leave **Recorded replay** selected and start the investigation. The first proposal fails multiple-payment and unsupported-payment cases; the next proposal passes all five. This is explicitly a deterministic demonstration, not live AI.
-2. Choose **Stripe invoice migration** and leave **Live search + AI** selected. This uses the privately configured SerpApi and Groq credentials, discovers real public Stripe documentation, generates a repair using the model, and tests it on local historical response fixtures. No payment API is called.
-3. Inspect **Evidence**, **Proposed repair**, **Acceptance tests**, and **Activity**. Download the proposed adapter and the Markdown or JSON report.
-4. For your own response data, open **Examples → Custom incident**. Paste a sanitized Python adapter, target vendor/version, observed failure, and a JSON array of `{name, input, expected}` cases. Only Stripe, GitHub, Slack and Shopify official hosts are supported. Prefer one precise error/field and a version with public migration documentation.
+![PatchPilot landing page](docs/assets/landing-desktop.png)
 
-The machine-readable API specification is available at http://127.0.0.1:8017/openapi.json.
+## Why PatchPilot
 
-In live mode your incident fields, adapter, sanitized acceptance cases and selected documentation are sent to the configured model provider. Search hints and symptom terms are sent to SerpApi. Test execution remains local. Remove private customer data before using live mode.
+- **Research the actual migration.** SerpApi Google discovery identifies candidates; fetched official documentation supplies evidence.
+- **Protect the contract.** Original acceptance cases remain unchanged while the agent revises its proposal.
+- **Catch an incomplete patch.** A separate 20-case local counterexample audit applies to the bundled Stripe invoice contract, covering malformed and expanded payment pointers.
+- **Keep a reviewable record.** Inspect source passages, literal citations, the diff, case results, and hashes binding the contract, evidence and patch.
+- **Recover work.** SQLite checkpoints preserve research and attempts; interrupted investigations can resume.
 
-## Local startup
+## Get started
 
-From PowerShell in this folder:
+Requires Docker with Linux containers and Docker Compose 2.24 or newer.
 
-```powershell
-.\scripts\setup.ps1
-.\scripts\start.ps1
+```sh
+git clone https://github.com/sankalp2515/PatchPilot.git
+cd PatchPilot
+docker compose up --build -d
 ```
 
-Setup installs locked Python and frontend dependencies and builds the UI. The server serves the production frontend at loopback port 8017. Start is idempotent; the helper launches a hidden process, saves its PID and writes logs under `.data/`. Stop only this project's recorded server:
+Open [localhost:8017](http://127.0.0.1:8017) after the service becomes healthy, then select **Open workspace**. The homepage explains the product; [/app](http://127.0.0.1:8017/app) opens the repair workspace. **Recorded replay works without accounts, API keys or a `.env` file.** The Compose volume retains run history across restarts. Do not remove it when retaining investigations.
+
+For native Windows setup, install Python 3.12, Node.js 22.12 or newer, and preferably `uv`:
 
 ```powershell
-.\scripts\stop.ps1
+.\scripts\run.ps1
 ```
 
-Run history persists in `.data/patchpilot.db`. After an unexpected restart, incomplete investigations become **Ready to resume**. Resuming reuses saved evidence and preserves the repair attempt budget; a saved passing proposal is rechecked before finalization.
+This installs dependencies, builds the UI and starts the local service. Setup and start scripts are available separately; `scripts/stop.ps1` stops the project's recorded process. On macOS/Linux use `./scripts/setup.sh` then `./scripts/start.sh`. Native data and server logs live under `.data/`.
 
-Requires Python 3.12 or newer and Node.js 22.12 or newer. `uv` is recommended; setup includes a pip fallback. Docker is optional: `docker compose up --build -d`. Docker packaging is provided, but the overnight verified runtime is the native Windows setup.
+### Try the recovery example
 
-## Credentials
+1. Choose **Recovery from an incomplete repair** in the workspace.
+2. Leave **Recorded replay** selected and start. The initial proposal misses cases; the agent uses actual failures to revise it.
+3. Inspect **Evidence**, **Proposed repair**, **Acceptance tests**, **Activity**, and **Repair proof**.
+4. Download the adapter and JSON or Markdown report. Review before applying the patch yourself.
 
-`.env` is local, ignored by Git, and loaded only on the server. No key values are embedded in source, docs, screenshots, or the UI.
+Replay is a deterministic demonstration using recorded vendor evidence. It does not call a model or represent live AI performance. It supports the recorded Stripe `2025-03-31.basil` contract, `normalize_invoice`, and its unchanged five acceptance cases; use live mode for custom vendors, versions or contracts.
 
-For another installation, copy `.env.example` to `.env` and set `SERPAPI_API_KEY` and either `GROQ_API_KEY` or `NVIDIA_API_KEY`. Optional `LLM_PROVIDER` selects `groq` or `nvidia`; `LLM_MODEL` overrides its default. Existing Groq configuration uses `openai/gpt-oss-120b`. Replay does not require keys. Provider account quotas and model permissions are reported as real run failures, never silently replaced with replay.
+![PatchPilot repair workspace](docs/assets/workspace-desktop.png)
 
-## What the agent does
+### Run live research
 
-| Focus area | Implemented behavior |
-| --- | --- |
-| Planning | Saves the incident plan, test scope and retry/time budgets before acting. |
-| Tool use | Calls SerpApi, acquires official pages, generates a model proposal, checks AST policy and runs cases. |
-| State | SQLite checkpoints preserve sources, attempts, decisions, cancellations and outputs. |
-| Context | Filters official hosts, target versions and incident terms; validates literal source quotations. |
-| Execution | Completes a bounded adapter repair workflow and produces code, diff and reports. |
-| Recovery | Retries provider transport once, follows a vendor release index when discovery is adjacent, resumes interrupted work and refuses unsupported incidents. |
-| Verification | Immutable cases and strict JSON comparison determine the outcome; source citations must exist and address incident context. |
-| Iteration | Failed case results or citation/AST rejections guide subsequent proposals, up to three attempts. |
+Copy [.env.example](.env.example) to `.env` only if one does not already exist. Set `SERPAPI_API_KEY` and one supported model provider's key. Preserve existing private configuration; never commit it.
 
-## Security and scope
+| Provider | `LLM_PROVIDER` | Required key | Default model |
+|---|---|---|---|
+| Groq | `groq` | `GROQ_API_KEY` | `openai/gpt-oss-120b` |
+| NVIDIA | `nvidia` | `NVIDIA_API_KEY` | `openai/gpt-oss-20b` |
 
-The repair target is a single JSON-to-JSON Python adapter function. Code runs through a bounded AST interpreter; there is no `exec`, `eval`, import, filesystem, shell, network or arbitrary repository execution. Supported constructs and methods are documented in [system design](docs/system-design.md). Inputs, graph traversal, output sizes, arithmetic, retries and runtime are bounded. Unsafe code is rejected. API requests are restricted to approved local Host names and same-origin browser mutations.
+`LLM_MODEL` overrides the default. Restart after changing configuration. Select **Stripe invoice migration** and **Live search + AI**. SerpApi discovers public vendor pages; the model proposes a repair; local fixtures verify it. No Stripe payment API is called. Account quotas and model access still apply; failures remain visible.
 
-Passing cases establish correctness only for those cases. PatchPilot proposes a downloadable artifact and never auto-merges, deploys, modifies payment credentials, or writes into a customer repository. Use sanitized data; obvious credential-bearing input is rejected. The application is a local single-user MVP, not an authenticated public SaaS deployment.
+Live mode sends incident fields, adapter code, acceptance cases and selected documentation to the model provider. Search hints and symptom terms go to SerpApi. Supply sanitized data. Keys remain server-side. Optional `NEATLOGS_API_KEY` enables allowlisted operational tracing with content capture disabled.
 
-## Tests
+## What “verified” establishes
 
-```powershell
-.venv\Scripts\python.exe -m pytest -q
-.venv\Scripts\python.exe -m ruff check patchpilot tests scripts
-cd web
-npm test
-npm run build
-npm run test:e2e
+A patch must pass supplied acceptance cases and any applicable independent local audit. The bundled Stripe `2025-03-31.basil` example has five acceptance cases and a separate 20-case audit. That audit applies only when the fetched migration source, vendor, version, entrypoint and output contract match its local normalization policy. Other incidents report that no independent policy applies.
+
+Hashes bind the contract, cases, sources, patch, diff, baseline, citations and results. They support artifact comparison; they are not signatures or external attestations. Passing these fixtures does not establish universal correctness or vendor certification.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    UI[React workspace] --> API[FastAPI intake]
+    API --> Agent[Bounded repair agent]
+    Agent --> DB[(SQLite checkpoints)]
+    Agent --> Search[SerpApi Google discovery]
+    Search --> Fetch[Official HTTPS acquisition]
+    Fetch --> Model[Groq or NVIDIA proposal]
+    Model --> Guards[Literal citations and AST policy]
+    Guards --> Tests[Acceptance checks and scoped audit]
+    Tests --> Proof[Repair proof and exports]
+    Agent -. safe metadata .-> Neat[neatlogs SDK]
 ```
 
-Browser tests require a running server and Playwright Chromium (`npx playwright install chromium`). They exercise repair/recovery, source and test views, report downloads, mobile layout, invalid JSON and credential rejection. Live smoke is intentionally separate from automated tests: from the repository root run `.venv\Scripts\python.exe -m scripts.live_smoke`; it consumes real provider requests and saves a sanitized summary in `docs/live-verification.json`.
+The agent plans, executes tools, selects context, persists state, retries failures and revises patches from verification feedback. It allows at most three proposal attempts and a 240-second run timeout. One JSON-to-JSON Python function runs through a restricted AST interpreter without `exec`, `eval`, imports, filesystem, shell or network access.
 
-## Architecture and handoff
+## Partner evidence
 
-- [System architecture](docs/architecture.md): boundaries, component relationships, security and quality attributes.
-- [System design](docs/system-design.md): operational data flows, API, state and execution details.
-- [Implementation plan](docs/superpowers/plans/2026-10-12-patchpilot.md): tasks and verification gates.
-- [Morning partner setup](docs/morning-integrations.md): neatlogs, Entire and cfo.ai integration and required evidence.
-- [Evaluation and verification](docs/testing.md): reproducible examples and limitations.
-- [Business assumptions](docs/economics.md): inputs to validate and model in cfo.ai.
+| Integration | Inspectable evidence | What it demonstrates |
+|---|---|---|
+| SerpApi | [Live verification](docs/live-verification.json), per-run provenance | Real Google discovery and fetched vendor context; outcomes depend on providers |
+| neatlogs | [Before/after readback](docs/evidence/neatlogs-improvement.json) | Account-backed trace readback: preserved baseline 5/5 acceptance, 6/20 audit; enhanced replay 5/5 and 20/20 |
+| Entire | [Checkpoint record](docs/evidence/entire-checkpoint.json) | Real read-only design-review session attached to commit `791e5a4`; imported retrospectively, not continuous earlier capture |
+| cfo.ai | [Saved model](docs/evidence/cfo-model.json), [economics](docs/economics.md) | Three illustrative USD scenarios, 45 selected cells, 44 nonempty cells, zero formula errors |
 
-neatlogs, Entire and cfo.ai account-backed integration is deliberately **pending** setup. Local traces, Git commits and a financial worksheet are preparation, not sponsor compliance. Git history records the actual development work; hackathon eligibility and submission still need review. The GitHub repository is available for integration work; no hackathon entry, demo upload or public social post has been submitted.
+The neatlogs comparison is a synthetic same-contract adapter evaluation, not an LLM accuracy benchmark. cfo.ai assumptions are not measured revenue, customers or demand. Subscription concepts are hypotheses; billing is not implemented.
+
+## Develop and verify
+
+```sh
+uv sync --python 3.12 --extra dev
+uv run pytest -q
+uv run ruff check patchpilot tests scripts
+npm --prefix web ci
+npm --prefix web test
+npm --prefix web run build
+```
+
+For browser checks, start the server, run `npx --prefix web playwright install chromium`, then `npm --prefix web run test:e2e`. Live smoke is separate: `uv run python -m scripts.live_smoke` consumes provider requests and saves a sanitized summary. Automated provider tests use controlled responses. See [contributing](CONTRIBUTING.md) and [testing](docs/testing.md).
+
+## Documentation
+
+| Guide | Contents |
+|---|---|
+| [Architecture](docs/architecture.md) | Components, boundaries, persistence and hosting |
+| [System design](docs/system-design.md) | Lifecycle, verification, recovery and artifact binding |
+| [User flows](docs/user-flows.md) | Replay, live, custom incidents and recovery |
+| [API guide](docs/api-guide.md) | Routes, configuration, payloads and errors |
+| [Design](docs/design.md) | Visual system and responsive interface |
+| [Judging guide](docs/judging.md) | Eight agent focus areas, evidence and gaps |
+| [Submission kit](docs/submission-kit.md) | Entry copy, partner proof and submission steps |
+| [Demo scripts](docs/demo-scripts.md) | Narrated walkthroughs under three minutes |
+
+## Scope and limitations
+
+PatchPilot is a local single-user MVP. Discovery supports Stripe, GitHub, Slack and Shopify, but the demonstrated migration and independent audit are Stripe-specific. Custom inputs require precise public migration evidence and supported interpreter constructs. Missing evidence, auth problems, provider failures and exhausted repairs produce explicit unresolved outcomes.
+
+Public hosting needs authentication, authorization and operational hardening. Host and same-origin checks do not replace those controls. PatchPilot exports a proposal; it does not merge, deploy or modify your repository. Human review remains necessary. See [SECURITY.md](SECURITY.md).
+
+Released under the [MIT License](LICENSE), copyright 2026 Sankalp. Third-party packages and vendor documentation retain their rights. AI-assisted development and synthetic evaluations are disclosed; no customer testimonials or production claims are implied.

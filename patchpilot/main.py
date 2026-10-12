@@ -10,6 +10,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .agent import Agent
 from .config import ROOT, Settings
 from .examples import examples
+from .observability import Telemetry
 from .providers import Tools
 from .reports import markdown_report
 from .schemas import IncidentRequest
@@ -20,21 +21,30 @@ def create_app(settings=None):
     settings = settings or Settings()
     store = Store(settings.database_path)
     tasks = {}
-    agent = Agent(store, Tools(settings))
+    telemetry = Telemetry(
+        settings.neatlogs_api_key,
+        secrets=[settings.serpapi_api_key, settings.groq_api_key, settings.nvidia_api_key],
+    )
+    agent = Agent(store, Tools(settings), telemetry)
 
     @asynccontextmanager
     async def lifespan(app):
-        store.interrupt_incomplete()
-        yield
-        for task in tasks.values():
-            if not task.done():
-                task.cancel()
-        if tasks:
-            await asyncio.gather(*tasks.values(), return_exceptions=True)
+        telemetry.start()
+        try:
+            store.interrupt_incomplete()
+            yield
+        finally:
+            for task in tasks.values():
+                if not task.done():
+                    task.cancel()
+            if tasks:
+                await asyncio.gather(*tasks.values(), return_exceptions=True)
+            telemetry.close()
 
     app = FastAPI(title="PatchPilot", version="0.1.0", lifespan=lifespan, docs_url=None, redoc_url=None)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
     app.state.store = store
+    app.state.telemetry = telemetry
 
     @app.middleware("http")
     async def local_boundary(request: Request, call_next):
@@ -79,6 +89,14 @@ def create_app(settings=None):
 
     @app.get("/api/config")
     def config():
+        partners = {"neatlogs": "pending", "entire": "pending", "cfo_ai": "pending"}
+        try:
+            evidence = json.loads((ROOT / "docs" / "integration-evidence.json").read_text(encoding="utf-8"))
+            for partner in partners:
+                if isinstance(evidence.get(partner), dict) and evidence[partner].get("status") == "verified":
+                    partners[partner] = "verified"
+        except (OSError, ValueError, AttributeError):
+            pass
         return {
             "name": "PatchPilot",
             "live_ready": bool(settings.serpapi_api_key and settings.llm_key),
@@ -86,7 +104,8 @@ def create_app(settings=None):
             "model_ready": bool(settings.llm_key),
             "provider": settings.provider,
             "model": settings.model,
-            "partners": {"neatlogs": "pending", "entire": "pending", "cfo_ai": "pending"},
+            "partners": partners,
+            "telemetry": {"status": telemetry.status, "content_capture": False},
             "limits": {"attempts": 3, "cases": 12, "seconds": 240, "code_characters": 12000},
         }
 
@@ -173,7 +192,9 @@ def create_app(settings=None):
         app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
 
     @app.get("/")
-    def index():
+    @app.get("/app")
+    @app.get("/app/{path:path}")
+    def index(path: str = ""):
         if (dist / "index.html").exists():
             return FileResponse(dist / "index.html")
         return PlainTextResponse(

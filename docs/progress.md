@@ -1,4 +1,6 @@
-# Overnight execution ledger
+# Historical overnight execution ledger
+
+This ledger records the first MVP phase. Its pending integrations and earlier test counts were superseded by the submission upgrade: [current plan](superpowers/plans/2026-10-12-submission.md), [integration evidence](integrations.md), [current verification](testing.md), and [release changes](../CHANGELOG.md). Preserve the original decisions below as history, not current readiness claims.
 
 Plan: docs/superpowers/plans/2026-10-12-patchpilot.md
 

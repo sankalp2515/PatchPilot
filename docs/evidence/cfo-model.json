@@ -1,0 +1,239 @@
+{
+  "source": "cfo.ai MCP saved-model readback",
+  "scenario": "PatchPilot launch hypotheses",
+  "as_of": 286079,
+  "coverage": {
+    "calculation": "complete",
+    "delivery": "complete",
+    "returned": {
+      "rows": 15,
+      "columns": 3
+    },
+    "selected": {
+      "rows": 15,
+      "columns": 3
+    },
+    "summary": {
+      "rows": 15,
+      "columns": 3,
+      "nonempty_cells": 44,
+      "formula_errors": 0
+    }
+  },
+  "page": {
+    "display_name": "PatchPilot business plan",
+    "ref": "PatchPilot business plan#697",
+    "url": "https://app.cfo.ai/s/p_AQGFqAYkNjk3ZjQ3ZWItMWE2MC00ZmNjLTg4NDctMzczMGZiM2ZhZmUwJGZiMDNiNGFkLTY1NjgtNDZjZS1iMzlhLWMzNjBkNzc3ODgxZg"
+  },
+  "table": {
+    "display_name": "PatchPilot launch economics",
+    "ref": "PatchPilot launch economics#d2b",
+    "url": "https://app.cfo.ai/s/p_AQKFqAYkZDJiMDlhNTEtZTAzNS00NmFiLTkwNDktY2I1MDc4NGZiMjZiJGZiMDNiNGFkLTY1NjgtNDZjZS1iMzlhLWMzNjBkNzc3ODgxZg"
+  },
+  "cases": [
+    "Base",
+    "Conservative",
+    "Growth"
+  ],
+  "rows": [
+    {
+      "name": "PP Paying customers",
+      "formula": {
+        "timeless": "10"
+      },
+      "values": [
+        {
+          "value": 40,
+          "formula": "40"
+        },
+        10,
+        {
+          "value": 100,
+          "formula": "100"
+        }
+      ]
+    },
+    {
+      "name": "PP Monthly price USD",
+      "formula": {
+        "timeless": "25"
+      },
+      "values": [
+        {
+          "value": 34,
+          "formula": "34"
+        },
+        25,
+        {
+          "value": 40,
+          "formula": "40"
+        }
+      ]
+    },
+    {
+      "name": "PP Revenue USD",
+      "formula": {
+        "timeless": "`PP Paying customers` * `PP Monthly price USD`"
+      },
+      "values": [
+        1360,
+        250,
+        4000
+      ]
+    },
+    {
+      "name": "PP Runs per customer",
+      "formula": {
+        "timeless": "15"
+      },
+      "values": [
+        {
+          "value": 20,
+          "formula": "20"
+        },
+        {
+          "value": 30,
+          "formula": "30"
+        },
+        15
+      ]
+    },
+    {
+      "name": "PP Direct cost per run USD",
+      "formula": {
+        "timeless": "0.08"
+      },
+      "values": [
+        0.08,
+        {
+          "value": 0.12,
+          "formula": "0.12"
+        },
+        0.08
+      ]
+    },
+    {
+      "name": "PP Useful repair rate",
+      "formula": {
+        "timeless": "0.35"
+      },
+      "values": [
+        {
+          "value": 0.6,
+          "formula": "0.6"
+        },
+        0.35,
+        {
+          "value": 0.75,
+          "formula": "0.75"
+        }
+      ]
+    },
+    {
+      "name": "PP Review cost per useful repair USD",
+      "formula": {
+        "timeless": "0.5"
+      },
+      "values": [
+        {
+          "value": 1,
+          "formula": "1"
+        },
+        {
+          "value": 2,
+          "formula": "2"
+        },
+        0.5
+      ]
+    },
+    {
+      "name": "PP Investigations",
+      "formula": {
+        "timeless": "`PP Paying customers` * `PP Runs per customer`"
+      },
+      "values": [
+        800,
+        300,
+        1500
+      ]
+    },
+    {
+      "name": "PP Direct costs USD",
+      "formula": {
+        "timeless": "`PP Investigations` * (`PP Direct cost per run USD` + `PP Useful repair rate` * `PP Review cost per useful repair USD`)"
+      },
+      "values": [
+        544,
+        245.99999999999997,
+        682.5
+      ]
+    },
+    {
+      "name": "PP Gross profit USD",
+      "formula": {
+        "timeless": "`PP Revenue USD` - `PP Direct costs USD`"
+      },
+      "values": [
+        816,
+        4.000000000000028,
+        3317.5
+      ]
+    },
+    {
+      "name": "PP Gross margin",
+      "formula": {
+        "timeless": "iferror(`PP Gross profit USD` / `PP Revenue USD`, NULL)"
+      },
+      "values": [
+        0.6,
+        0.016000000000000115,
+        0.829375
+      ]
+    },
+    {
+      "name": "PP Operating expense USD",
+      "formula": {
+        "timeless": "2000"
+      },
+      "values": [
+        2000,
+        2000,
+        2000
+      ]
+    },
+    {
+      "name": "PP Net burn USD",
+      "formula": {
+        "timeless": "max(`PP Operating expense USD` - `PP Gross profit USD`, 0)"
+      },
+      "values": [
+        1184,
+        1996,
+        0
+      ]
+    },
+    {
+      "name": "PP Hypothetical opening cash USD",
+      "formula": {
+        "timeless": "10000"
+      },
+      "values": [
+        10000,
+        10000,
+        10000
+      ]
+    },
+    {
+      "name": "PP Static runway months",
+      "formula": {
+        "timeless": "if(`PP Net burn USD` > 0, `PP Hypothetical opening cash USD` / `PP Net burn USD`, NULL)"
+      },
+      "values": [
+        8.445945945945946,
+        5.01002004008016,
+        null
+      ]
+    }
+  ],
+  "assumptions": "All customer, price, rate, cost, operating expense and cash inputs are illustrative USD hypotheses; no actual financial information or validated traction."
+}

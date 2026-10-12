@@ -1,0 +1,5 @@
+{
+  "neatlogs": {"status": "verified", "sdk_version": "1.4.26", "evidence": "docs/evidence/neatlogs-improvement.json", "scope": "Persisted synthetic evaluation traces, not independent real-world accuracy."},
+  "entire": {"status": "verified", "checkpoint": "01M4QNEWXG1454P3MWJM7EDW0J", "evidence": "docs/evidence/entire-checkpoint.json", "scope": "Genuine read-only design-review session attached retrospectively; continuous hook capture not claimed."},
+  "cfo_ai": {"status": "verified", "evidence": "docs/evidence/cfo-model.json", "scope": "Saved editable three-case planning model; inputs are illustrative hypotheses."}
+}

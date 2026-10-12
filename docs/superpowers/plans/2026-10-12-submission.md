@@ -17,12 +17,12 @@ No invented customer evidence, sponsor artifacts, published posts or eligibility
 Absent/failed telemetry must not break repair; invalid JSON/payment pointers must not earn verified status; old runs must render; mobile/keyboard flows must remain usable; installation must select a supported interpreter.
 
 ## Tasks
-- [ ] 1. Verify sponsor accounts and install supported Python/Entire; inspect current evidence.
-- [ ] 2. Implement safe neatlogs spans and real SDK probe/readback; test disabled and failure paths.
-- [ ] 3. Add immutable repair proof and independent counterexample audit; regression tests and live smoke.
-- [ ] 4. Build landing page, premium design system and guided workspace; UI tests, responsive browser verification.
-- [ ] 5. Create and read back cfo.ai financial scenario; capture genuine Entire development checkpoint.
-- [ ] 6. Publish clear install/run documentation, architecture, design rationale, sponsor evidence, judging assessment and demo/submission kits.
+- [x] 1. Verify sponsor accounts and install supported Python/Entire; inspect current evidence.
+- [x] 2. Implement safe neatlogs spans and real SDK probe/readback; test disabled and failure paths.
+- [x] 3. Add deterministic repair proof and independent counterexample audit; regression tests and live smoke.
+- [x] 4. Build landing page, premium design system and guided workspace; UI tests, responsive browser verification.
+- [x] 5. Create and read back cfo.ai financial scenario; capture genuine Entire development checkpoint.
+- [x] 6. Publish clear install/run documentation, architecture, design rationale, sponsor evidence, judging assessment and demo/submission kits.
 - [ ] 7. Run backend/frontend/e2e/live checks, review changes, fix material findings, commit and push public repository.
 
 ## Progress and rulings

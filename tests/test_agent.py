@@ -44,6 +44,71 @@ async def test_abstains_when_evidence_missing_or_auth_failure(tmp_path, index):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"vendor": "github"},
+        {"target_version": "not-a-real-release"},
+        {"entrypoint": "other_adapter"},
+        {"cases": [{"name": "changed", "input": {}, "expected": []}]},
+    ],
+)
+async def test_recorded_replay_refuses_edited_contract(tmp_path, changes):
+    run = await run_example(tmp_path, **changes)
+    assert run["status"] == "needs_human"
+    assert not run["sources"] and not run["attempts"] and not run["proposed_code"]
+    assert any(
+        "recorded" in event["detail"].lower() and "live" in event["detail"].lower() for event in run["events"]
+    )
+
+
+@pytest.mark.asyncio
+async def test_recorded_proposal_independently_rejects_edited_contract():
+    tools = Tools(Settings(_env_file=None))
+    request = examples()[0] | {"mode": "replay", "vendor": "github", "target_version": "not-a-real-release"}
+    with pytest.raises(ValueError, match="recorded"):
+        await tools.propose(request, [], [], lambda *args: None)
+
+
+@pytest.mark.asyncio
+async def test_recorded_research_independently_rejects_edited_contract():
+    tools = Tools(Settings(_env_file=None))
+    request = examples()[0] | {"mode": "replay", "vendor": "github"}
+    events = []
+    assert await tools.research(request, lambda *args: events.append(args)) == []
+    assert events[0][0] == "decision" and "live mode" in events[0][2]
+
+
+@pytest.mark.asyncio
+async def test_resume_cannot_verify_unrelated_saved_replay_evidence(tmp_path):
+    from patchpilot.examples import REPAIR_CODE
+    from patchpilot.sandbox import verify
+
+    store = Store(tmp_path / "unrelated.db")
+    tools = Tools(Settings(_env_file=None))
+    fixture = examples()[0] | {"mode": "replay"}
+    sources = await tools.research(fixture, lambda *args: None)
+    proposal = await tools.propose(fixture, sources, [], lambda *args: None)
+    request = fixture | {"vendor": "github", "target_version": "not-a-real-release"}
+    run = store.create(request)
+    store.update(
+        run["id"],
+        {
+            "status": "interrupted",
+            "sources": sources,
+            "proposed_code": REPAIR_CODE,
+            "verification": verify(REPAIR_CODE, request["entrypoint"], request["cases"]),
+            "citations": proposal["citations"],
+        },
+    )
+    await Agent(store, tools).run(run["id"])
+    final = store.get(run["id"])
+    assert final["status"] == "needs_human"
+    assert not final["attempts"]
+    assert final["input"] == request
+
+
+@pytest.mark.asyncio
 async def test_already_passing_adapter_does_not_call_providers(tmp_path):
     run = await run_example(
         tmp_path,

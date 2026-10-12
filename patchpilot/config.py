@@ -22,9 +22,7 @@ class Settings(BaseSettings):
 
     @property
     def model(self):
-        return self.llm_model or (
-            "openai/gpt-oss-120b" if self.provider == "groq" else "meta/llama-3.3-70b-instruct"
-        )
+        return self.llm_model or ("openai/gpt-oss-120b" if self.provider == "groq" else "openai/gpt-oss-20b")
 
     @property
     def llm_key(self):

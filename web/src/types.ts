@@ -44,7 +44,28 @@ export type Source = {
   sha256: string;
   query: string;
 };
+export type RepairProof = {
+  contract_hash: string;
+  evidence_hashes: { source_id: string; sha256: string }[];
+  patch_hash: string;
+  acceptance_passed: number;
+  total: number;
+  audit: {
+    applicable: boolean;
+    passed: number;
+    total: number;
+    results: Result[];
+  };
+  verified_scope: string;
+};
 export type Run = {
+  proof?: RepairProof | null;
+  telemetry?: {
+    enabled?: boolean;
+    status?: string;
+    trace_id?: string;
+    error?: string;
+  };
   id: string;
   status: string;
   phase: string;

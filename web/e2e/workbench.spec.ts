@@ -5,7 +5,7 @@ test("recovery example completes with protected tests, evidence, diff and report
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/app");
   await page.getByRole("button", { name: /Recorded replay Recovery/ }).click();
   await expect(page.getByLabel("Execution mode")).toHaveValue("replay");
   await page
@@ -40,7 +40,7 @@ test("mobile workbench and editor remain usable without horizontal overflow", as
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/app");
   await page.getByRole("button", { name: "Examples", exact: true }).click();
   await expect(page.getByText("Bring your own integration")).toBeVisible();
   await page.getByRole("button", { name: /No authoritative evidence/ }).click();
@@ -61,7 +61,7 @@ test("mobile workbench and editor remain usable without horizontal overflow", as
 test("invalid JSON remains editable and credential input is rejected", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/app");
   await page
     .getByRole("button", { name: "New investigation", exact: true })
     .click();
@@ -88,4 +88,14 @@ test("invalid JSON remains editable and credential input is rejected", async ({
     "Check the incident fields",
   );
   await expect(page.getByRole("dialog")).toBeVisible();
+});
+
+test('landing navigation reaches the workspace and stays readable on mobile', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/');
+  await expect(page.getByRole('heading', {name:'API changes. Your contract stays.'})).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.getByRole('link', {name:'Try the repair workspace'}).click();
+  await expect(page).toHaveURL(/\/app$/);
+  await expect(page.getByRole('button', {name:'New investigation', exact:true})).toBeVisible();
 });

@@ -1,31 +1,34 @@
-# PatchPilot Evaluation and Verification
+# Verification and evidence
 
-The deliverable includes a working native Windows server, compiled React frontend, offline replay demonstrations, and a live SerpApi/Groq repair. The repaired Stripe example is a historical API migration tested on sanitized local fixtures. Real public documentation is fetched in live mode; no live payment transaction is created.
+Use Python 3.12 and Node.js 22. Tests operate on disposable SQLite databases and controlled provider responses. No credentials are needed for regression checks or replay browser journeys.
 
-## Reproducible examples
+```powershell
+.venv\Scripts\python.exe -m pytest -q
+.venv\Scripts\python.exe -m ruff check patchpilot tests scripts
+.venv\Scripts\python.exe -m ruff format --check patchpilot tests scripts
+npm --prefix web test
+npm --prefix web run build
+.\scripts\start.ps1
+npm --prefix web run test:e2e
+.venv\Scripts\python.exe -m scripts.http_smoke
+```
 
-| Example | Expected outcome | What it establishes |
-| --- | --- | --- |
-| Stripe invoice migration in live mode | Verified if relevant evidence and providers are available; otherwise explicit stop | Search, official source acquisition, literal citations, AI patch and protected cases. |
-| Recovery from incomplete repair in replay | First patch 2/5, second patch 5/5 | Failed test feedback changes the next deterministic proposal. |
-| No authoritative evidence in replay | Needs investigation, no patch | Evidence absence does not become fabricated certainty. |
-| Authentication failure in replay | Needs investigation, no patch | Credential/quota failures are distinguished from schema drift. |
-| Custom sanitized real response | Scoped result, refusal or failure depending on evidence and adapter compatibility | User-defined target behavior and real public research. |
+## Exercised behavior
 
-## Automated coverage
+Final local verification: **86 backend tests, 8 UI tests and 4 browser journeys passed**, plus Ruff lint/format, TypeScript/production build, publication key scan, and the final key-free Docker HTTP smoke. The final live example passed 5/5 acceptance and 20/20 local audit using one SerpApi discovery operation, one model proposal, 3,286 reported tokens and 6.45 seconds. These are measured example results, not latency or quality guarantees. [Exact persisted live trace receipt](evidence/live-trace.json) retains 13 spans and typed token counts.
 
-Backend tests cover AST restrictions, immutable inputs, strict JSON comparison, output/numeric/list/nested queue budgets, credentials, persistent state, bounded retry, recovery, cancellation, saved passing repair restoration, source host validation, citation membership and incident relevance, missing evidence, same-origin requests, trusted local hosts, API errors and reports. Frontend tests cover editable samples, pending partner status, initial connection errors and selected-run retry recovery. Browser tests cover an end-to-end repair/recovery, evidence/diff/tests/report download, phone layout, invalid JSON and credential-bearing input.
+Backend checks cover AST escape attempts, operation/size budgets, strict boolean-vs-number JSON comparison, exact official hosts and redirects, version/incident relevance, literal citations, retries, protected cases, durable resume/cancel, same-origin/Host protections, proof/checksum binding, 20-case scoped counterexample policy, live `.md` source applicability, conflicting user contracts, legacy reports, telemetry disabled/unavailable behavior, metadata privacy and typed LLM usage.
 
-Use the exact commands in README. External network providers are mocked in automated tests; the explicit live smoke is separate. One upstream Starlette TestClient deprecation warning is currently emitted because runtime networking uses httpx; it does not indicate a failed check.
+Frontend checks cover landing navigation, local installation/pricing disclosures, old-run proof absence and independent audit display. Four Playwright journeys exercise landing-to-workspace, deterministic replay recovery/export, missing evidence and credential-failure refusal. Visual checks inspect 1440-pixel desktop and 390-pixel phone landing/workspace layouts, with screenshots in `docs/assets/`.
 
-## Independent review
+Docker was built and run without `.env` on a separate loopback port. Its health check passed; `/`, `/app`, API replay recovery and Markdown report returned successfully, with 5/5 protected cases, 20/20 local audit and two attempts. Reproduce with `docker compose up --build -d` and `python -m scripts.http_smoke` from a developer environment; the HTTP script can target a different port using `--base-url`.
 
-A separate read-only reviewer examined the whole application. The review identified source relevance without search hints, selected-run polling recovery, local Host validation, restart restoration and verifier resource/comparison boundaries. Each finding received a regression test and a fix. SQLite connections now close deterministically. The review did not find an interpreter escape.
+## Real integrations
 
-## UI verification ledger
+[Successful live reference](live-verification.json) records actual SerpApi search, official Stripe page acquisition and Groq proposals against synthetic historical response fixtures. Its final verdict passed 5 supplied cases and 20 local counterexamples. This is a real provider run, not a payment transaction or broad accuracy benchmark. Subsequent [Groq quota refusal](evidence/live-groq-quota.json) and [NVIDIA unverified run](evidence/live-nvidia-unverified.json) are preserved, not overwritten as successes. The [latest attempt](evidence/live-latest-attempt.json) may differ from the successful reference. NVIDIA's retired Llama default returned HTTP 410; an available GPT-OSS model was tested but did not earn a verified verdict within budget.
 
-The code-native design inventory is in `system-design.md`. Browser QA inspected the actual default viewport, 1440x1000 desktop, and 390x844 phone layouts. Navigation, intake, timeline, evidence, diff, before/after results and report download were exercised. The first viewport preserves the workbench heading, investigation action and sample cards. The navy navigation, white panels, blue controls and restrained green verification state follow the inventory. Desktop repair and mobile screenshots are saved under `docs/assets/`.
+[neatlogs improvement](evidence/neatlogs-improvement.json) records exact persisted traces and their parent hierarchy. The pre-upgrade adapter passes 5/5 supplied cases but 6/20 counterexamples; the improved replay agent passes 5/5 and 20/20 after a controlled failed attempt. [SDK Doctor](evidence/neatlogs-doctor.json) independently verified trace finalization, hierarchy and numeric token preservation. [Entire](evidence/entire-checkpoint.json) and [cfo.ai](evidence/cfo-model.json) are actual tool readbacks, not mocked artifacts.
 
-## Practical limits
+## Limits
 
-Only a bounded single adapter is repaired; arbitrary repositories, package installation and production remediation are intentionally excluded. Inputs must be sanitized. Fetched-source authority/version/token checks and literal quote membership do not constitute formal semantic proof of causality. Supplied acceptance cases, strict output comparison and reviewer inspection establish the tested scope. Expanding coverage to unseen versions and real SDK execution is future work. Docker packaging is provided but the native runtime is the exercised deployment. Partner SDK/CLI/account-backed compliance remains pending.
+A successful regression suite does not prove arbitrary migration correctness, production safety, demand or event eligibility. Hashes are reproducible checksums, not signatures or tamper-proof attestations. Source quotation and topical matching do not formally establish causality. No public multi-user hosting, billing, payment execution or arbitrary repository repair is claimed. One upstream Starlette TestClient/httpx deprecation warning remains.

@@ -1,0 +1,24 @@
+{
+  "checkpoint_id": "01M4QNEWXG1454P3MWJM7EDW0J",
+  "strategy": "manual-commit",
+  "checkpoints_count": 1,
+  "has_review": true,
+  "session_count": 1,
+  "sessions": [
+    {
+      "index": 0,
+      "session_id": "01a12f54-fb4d-7283-a536-bc150f398342",
+      "agent": "Codex",
+      "kind": "agent_review",
+      "created_at": "2026-10-12T09:00:23.1546266Z",
+      "token_usage": {
+        "input_tokens": 23731,
+        "cache_creation_tokens": 0,
+        "cache_read_tokens": 26880,
+        "output_tokens": 520,
+        "api_call_count": 2
+      }
+    }
+  ],
+  "tasks": []
+}

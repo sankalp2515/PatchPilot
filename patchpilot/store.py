@@ -50,6 +50,8 @@ class Store:
             "diff": "",
             "diagnosis": "",
             "citations": [],
+            "proof": None,
+            "telemetry": {"status": "disabled", "trace_id": None},
             "limitations": [],
             "metrics": {"search_calls": 0, "model_calls": 0, "tokens": 0, "elapsed_seconds": 0},
             "cancel_requested": False,

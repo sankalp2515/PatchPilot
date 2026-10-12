@@ -11,10 +11,17 @@ BASE_CODE = """def normalize_invoice(invoice):
 """
 REPAIR_CODE = """def normalize_invoice(invoice):
     ids = []
-    for item in invoice.get("payments", {}).get("data", []):
-        payment = item.get("payment", {})
-        if payment.get("type") == "payment_intent" and payment.get("payment_intent"):
-            ids.append(payment["payment_intent"])
+    payments = invoice.get("payments")
+    if isinstance(payments, dict) and isinstance(payments.get("data"), list):
+        for item in payments["data"]:
+            if isinstance(item, dict):
+                payment = item.get("payment")
+                if isinstance(payment, dict) and payment.get("type") == "payment_intent":
+                    pointer = payment.get("payment_intent")
+                    if isinstance(pointer, dict):
+                        pointer = pointer.get("id")
+                    if isinstance(pointer, str) and pointer:
+                        ids.append(pointer)
     return {"invoice_id": invoice["id"], "payment_intent_ids": ids}
 """
 PARTIAL_CODE = """def normalize_invoice(invoice):

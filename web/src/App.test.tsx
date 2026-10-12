@@ -16,6 +16,7 @@ const example = {
   replay_scenario: "repair",
 };
 beforeEach(() => {
+  window.history.replaceState({}, "", "/app");
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string) => {
@@ -53,13 +54,13 @@ test("loads example into editable intake and labels live mode", async () => {
   );
 });
 
-test("shows partner integrations as pending rather than compliant", async () => {
+test("shows actual partner integration configuration", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "Integrations" }));
   await waitFor(() =>
-    expect(screen.getByText("Morning setup")).toBeInTheDocument(),
+    expect(screen.getByText("Tools and project evidence")).toBeInTheDocument(),
   );
-  expect(screen.getAllByText("Pending").length).toBe(3);
+  expect(screen.getAllByText("Project evidence: pending").length).toBe(3);
 });
 
 test("network error produces a readable recovery action", async () => {
@@ -132,4 +133,33 @@ test("retry connection restarts selected investigation polling", async () => {
   await screen.findByRole("alert");
   fireEvent.click(screen.getByRole("button", { name: "Retry connection" }));
   expect(await screen.findByText("Recovered detail")).toBeInTheDocument();
+});
+
+test("partner state reflects server verification without upgrading other tools", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string) => ({
+      ok: true,
+      json: async () =>
+        url.includes("/config")
+          ? {
+              live_ready: false,
+              partners: {
+                neatlogs: "verified",
+                entire: "enabled",
+                cfo_ai: "configured",
+              },
+            }
+          : url.includes("/examples")
+            ? [example]
+            : [],
+    })),
+  );
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "Integrations" }));
+  expect(
+    await screen.findByText("Project evidence: verified"),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Project evidence: enabled")).toBeInTheDocument();
+  expect(screen.getByText("Project evidence: configured")).toBeInTheDocument();
 });

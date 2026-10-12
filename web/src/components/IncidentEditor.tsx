@@ -176,7 +176,7 @@ export default function IncidentEditor({
               <Search size={15} />
               {value.mode === "live"
                 ? "Uses SerpApi for public vendor research. Your adapter, sanitized cases and selected sources are sent to the configured AI provider; verification runs locally."
-                : "Uses labeled recorded evidence and a deterministic repair policy. No live AI or search requests."}
+                : "Replays the recorded Stripe 2025-03-31.basil contract and its unchanged five cases. No live AI or search requests. Use live mode for custom vendors, versions or acceptance cases."}
             </p>
           </div>
           <div className="editor-code-grid">

@@ -1,0 +1,59 @@
+name: Verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.10.9"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install Python dependencies
+        run: uv sync --locked --python 3.12 --extra dev
+      - name: Backend checks
+        run: |
+          uv run pytest -q
+          uv run ruff check patchpilot tests scripts
+          uv run ruff format --check patchpilot tests scripts
+          uv run python -m scripts.verify_publication
+      - name: Frontend checks
+        working-directory: web
+        run: |
+          npm ci
+          npm test
+          npm run build
+          npx playwright install --with-deps chromium
+      - name: Start key-free local service
+        run: |
+          mkdir -p .data
+          uv run uvicorn patchpilot.main:app --host 127.0.0.1 --port 8017 > .data/ci-server.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:8017/api/health; then exit 0; fi
+            sleep 1
+          done
+          cat .data/ci-server.log
+          exit 1
+      - name: Replay HTTP smoke
+        run: uv run python -m scripts.http_smoke --base-url http://127.0.0.1:8017
+      - name: Browser journey
+        working-directory: web
+        run: npm run test:e2e
+      - name: Preserve diagnostic logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-diagnostics
+          path: |
+            .data/ci-server.log
+            web/test-results/
+          retention-days: 7

@@ -207,6 +207,46 @@ export default function RunDetail({
           </span>
         )}
       </div>
+      <section className="proof-record" aria-label="Bound repair proof">
+        <h2>
+          <ShieldCheck size={19} />
+          Repair proof
+        </h2>
+        {run.proof ? (
+          <>
+            <div className="proof-counts">
+              <strong className="proof-acceptance">
+                {run.proof.acceptance_passed}/{run.proof.total} protected
+                acceptance cases
+              </strong>
+              <strong className="proof-audit">
+                {run.proof.audit.applicable
+                  ? `${run.proof.audit.passed}/${run.proof.audit.total} independent audit cases`
+                  : "Independent audit not applicable"}
+              </strong>
+            </div>
+            <dl>
+              <dt>Contract hash</dt>
+              <dd>{run.proof.contract_hash}</dd>
+              <dt>Evidence hashes</dt>
+              <dd>
+                {run.proof.evidence_hashes
+                  .map((item) => `${item.source_id}: ${item.sha256}`)
+                  .join(" · ") || "No captured evidence"}
+              </dd>
+              <dt>Patch hash</dt>
+              <dd>{run.proof.patch_hash || "No proposed patch"}</dd>
+            </dl>
+            <p>{run.proof.verified_scope}</p>
+          </>
+        ) : (
+          <p>
+            {active
+              ? "Proof appears when verification finishes."
+              : "This historical run has no bound repair proof."}
+          </p>
+        )}
+      </section>
       <div className="focus-strip" aria-label="Agent focus areas">
         {focus.map(([name, Icon]) => (
           <div
@@ -468,6 +508,11 @@ export default function RunDetail({
                 {run.input.mode === "live"
                   ? "Live search + model"
                   : "Recorded demonstration"}
+              </dd>
+              <dt>Telemetry</dt>
+              <dd>
+                {run.telemetry?.status || "not recorded"}
+                {run.telemetry?.trace_id ? ` · ${run.telemetry.trace_id}` : ""}
               </dd>
               <dt>Repair budget</dt>
               <dd>

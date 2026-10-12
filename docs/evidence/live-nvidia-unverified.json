@@ -1,0 +1,493 @@
+{
+  "id": "3e15141bb7154990b655826e60a201e1",
+  "status": "unverified",
+  "diagnosis": "The KeyError occurs because the Invoice object no longer contains a `payment_intent` field in the 2025-03-31.basil API. The updated API represents payments via an array of Invoice Payment objects under `invoice.payments`. The function now extracts payment intent IDs from that array, handling missing or malformed data gracefully.",
+  "metrics": {
+    "search_calls": 1,
+    "model_calls": 3,
+    "tokens": 7144,
+    "elapsed_seconds": 195.42
+  },
+  "baseline": [
+    {
+      "name": "Single payment",
+      "passed": false,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001"
+        ]
+      },
+      "actual": null,
+      "error": "KeyError: 'payment_intent'"
+    },
+    {
+      "name": "Multiple payments",
+      "passed": false,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001",
+          "pi_002"
+        ]
+      },
+      "actual": null,
+      "error": "KeyError: 'payment_intent'"
+    },
+    {
+      "name": "No payments yet",
+      "passed": false,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": null,
+      "error": "KeyError: 'payment_intent'"
+    },
+    {
+      "name": "Other payment type",
+      "passed": false,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": null,
+      "error": "KeyError: 'payment_intent'"
+    },
+    {
+      "name": "Missing payment pointer",
+      "passed": false,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": null,
+      "error": "KeyError: 'payment_intent'"
+    }
+  ],
+  "verification": [
+    {
+      "name": "Single payment",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001"
+        ]
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001"
+        ]
+      },
+      "error": ""
+    },
+    {
+      "name": "Multiple payments",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001",
+          "pi_002"
+        ]
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": [
+          "pi_001",
+          "pi_002"
+        ]
+      },
+      "error": ""
+    },
+    {
+      "name": "No payments yet",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    },
+    {
+      "name": "Other payment type",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    },
+    {
+      "name": "Missing payment pointer",
+      "passed": true,
+      "expected": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "actual": {
+        "invoice_id": "in_demo",
+        "payment_intent_ids": []
+      },
+      "error": ""
+    }
+  ],
+  "proof": {
+    "version": 1,
+    "contract_hash": "05d1a0adcc59c0b08cf858e770de6b2fec569b5047c9dc6d3047f48394542118",
+    "case_hash": "bf928ef1e5f75a874a46096a008be8f6fbb318b5890912306df20b6b664817d3",
+    "evidence_hashes": [
+      {
+        "source_id": "s1",
+        "sha256": "8e20a1109993b835d74d8c2e6e771c13b8b634c695c4f1fa1c1544dd97bd3045",
+        "binding_hash": "7ab4183a87f4e0aaafa260c21b5b61aa70052e6bd2b9fc137a544da1e3372549"
+      }
+    ],
+    "patch_hash": "e3283e4b9d873e7a7c676681a499ff8dac31b9ffaba1e2e54ea6e2cb4607d842",
+    "diff_hash": "b68d7477b735e8014e7c21f510735f0e9081ccc86ead036f885c16039c06de6b",
+    "baseline_hash": "9009e51438ecdf44141e5a505d901ce57885291910f223b89d6c830e1c4b314b",
+    "citations_hash": "c6794d52f343c76f336a277e51343b4a553fbeb159f6ecc52a048c49b5abffdc",
+    "acceptance_hash": "5d4bcb1ed69a361a702f41130f0145c837e7e6975b92fa86a7fa42fd882a2f79",
+    "acceptance_passed": 5,
+    "total": 5,
+    "audit": {
+      "applicable": true,
+      "passed": 13,
+      "total": 20,
+      "results": [
+        {
+          "name": "Null payment",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "List payment",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "String payment",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Missing payment",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Missing pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Null pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "List pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Numeric pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Boolean pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Empty pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Malformed expanded pointer",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Expanded pointer",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_expanded",
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Other kind",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "error": ""
+        },
+        {
+          "name": "Non-object item",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": [
+              "pi_valid"
+            ]
+          },
+          "actual": null,
+          "error": "ValueError: Method unavailable on this JSON value"
+        },
+        {
+          "name": "Malformed payments container 14",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": null,
+          "error": "ValueError: Method unavailable on this JSON value"
+        },
+        {
+          "name": "Malformed payments container 15",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": null,
+          "error": "ValueError: Method unavailable on this JSON value"
+        },
+        {
+          "name": "Malformed payments container 16",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": null,
+          "error": "ValueError: Method unavailable on this JSON value"
+        },
+        {
+          "name": "Malformed payments container 17",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": null,
+          "error": "TypeError: 'NoneType' object is not iterable"
+        },
+        {
+          "name": "Malformed payments container 18",
+          "passed": true,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "error": ""
+        },
+        {
+          "name": "Malformed payments container 19",
+          "passed": false,
+          "expected": {
+            "invoice_id": "in_audit",
+            "payment_intent_ids": []
+          },
+          "actual": null,
+          "error": "ValueError: Method unavailable on this JSON value"
+        }
+      ],
+      "policy": "Local Stripe invoice fixture normalization: retain nonempty string IDs (including expanded object IDs); ignore malformed values. Not a vendor guarantee."
+    },
+    "verified_scope": "Supplied acceptance cases in the restricted JSON adapter interpreter plus the local Stripe invoice counterexample fixture policy.",
+    "proof_hash": "52fd0aa1b4ee602f2370c71b35e12127e5a83c47c312c00bf548aa02217f3a7f"
+  },
+  "telemetry": {
+    "status": "enabled",
+    "trace_id": "050637d1f103dfce5705c98d3d1cad0b"
+  },
+  "limitations": [
+    "Repair attempts exhausted. The current proposal is not verified and must not be treated as fixed."
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Adds support for multiple (partial) payments on invoices",
+      "url": "https://docs.stripe.com/changelog/basil/2025-03-31/add-support-for-multiple-partial-payments-on-invoices.md",
+      "provenance": "serpapi_live_fetched",
+      "sha256": "8e20a1109993b835d74d8c2e6e771c13b8b634c695c4f1fa1c1544dd97bd3045"
+    }
+  ],
+  "attempt_errors": [
+    "",
+    "Model request failed after a bounded retry",
+    ""
+  ],
+  "provider": "nvidia"
+}

@@ -7,6 +7,7 @@ import math
 import operator
 
 BUILTINS = {
+    "isinstance": isinstance,
     "len": len,
     "str": str,
     "int": int,
@@ -262,6 +263,8 @@ class Interpreter:
         if isinstance(node, ast.Name):
             if node.id in env:
                 return env[node.id]
+            if node.id in {"dict", "list", "str"}:
+                return BUILTINS[node.id]
             raise ValueError(f"Unknown variable: {node.id}")
         if isinstance(node, ast.Dict):
             if any(k is None for k in node.keys):
