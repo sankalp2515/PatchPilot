@@ -16,7 +16,7 @@ def main():
     ]
     problems = []
     for name in filter(None, files):
-        if name == ".env" or name.startswith((".data/", ".venv/", "web/node_modules/")):
+        if name == ".env" or name.startswith((".data/", ".private/", ".venv/", "web/node_modules/")):
             problems.append(name)
             continue
         path = ROOT / name

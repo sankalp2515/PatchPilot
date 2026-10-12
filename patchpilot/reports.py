@@ -54,7 +54,7 @@ def markdown_report(run):
     lines += [
         "",
         "## Partner status",
-        "Sponsor verification is recorded separately in the repository integration evidence manifest.",
+        "Integration validation is recorded separately in the repository evidence manifest.",
         "",
         "## Run telemetry",
         f"Status: {run.get('telemetry', {}).get('status', 'not recorded')}",

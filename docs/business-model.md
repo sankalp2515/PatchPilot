@@ -1,4 +1,4 @@
-# PatchPilot business plan
+# Business model and validation assumptions
 
 Created and read back through the authenticated **cfo.ai MCP**, in the separate `PatchPilot launch hypotheses` scenario. [Open the saved economics table](https://app.cfo.ai/s/p_AQKFqAYkZDJiMDlhNTEtZTAzNS00NmFiLTkwNDktY2I1MDc4NGZiMjZiJGZiMDNiNGFkLTY1NjgtNDZjZS1iMzlhLWMzNjBkNzc3ODgxZg). The [saved-model receipt](evidence/cfo-model.json) retains formulas and returned values: 45 selected cells, 44 nonempty cells, zero formula errors. Growth runway is intentionally null because that case has no positive burn.
 

@@ -49,7 +49,7 @@ function IntegrationPage({ config }: { config: Config | null }) {
       "cfo.ai",
       "Plan a viable business",
       "Three editable launch scenarios cover pricing, cost, revenue and runway. Customer and financial inputs are clearly labelled hypotheses.",
-      "https://github.com/sankalp2515/PatchPilot/blob/main/docs/economics.md",
+      "https://github.com/sankalp2515/PatchPilot/blob/main/docs/business-model.md",
     ],
   ];
   return (
@@ -57,9 +57,9 @@ function IntegrationPage({ config }: { config: Config | null }) {
       <header className="page-heading">
         <div>
           <span className="small-label">Integrations</span>
-          <h1>Tools and project evidence</h1>
+          <h1>Connected tools and validation</h1>
           <p>
-            Bundled receipts establish this project's sponsor usage. Your
+            Release validation records describe how these tools were used. Your
             current provider configuration is shown below; a new installation
             needs its own accounts for live use.
           </p>

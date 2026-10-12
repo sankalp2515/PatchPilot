@@ -58,7 +58,7 @@ test("shows actual partner integration configuration", async () => {
   render(<App />);
   fireEvent.click(screen.getByRole("button", { name: "Integrations" }));
   await waitFor(() =>
-    expect(screen.getByText("Tools and project evidence")).toBeInTheDocument(),
+    expect(screen.getByRole("heading", { name: "Connected tools and validation" })).toBeInTheDocument(),
   );
   expect(screen.getAllByText("Project evidence: pending").length).toBe(3);
 });

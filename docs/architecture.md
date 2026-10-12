@@ -36,7 +36,7 @@ flowchart TB
 | Store | Transactional snapshots and recovery | `store.py` |
 | Telemetry | SDK lifecycle, nested spans and content exclusion | `observability.py` |
 
-Backend files are under `patchpilot/`. Entire and cfo.ai support development and submission evidence; neither is required in the repair runtime. Replay needs no external accounts.
+Backend files are under `patchpilot/`. Entire and cfo.ai support development context and business planning; neither is required in the repair runtime. Replay needs no external accounts.
 
 ## Trust boundaries
 

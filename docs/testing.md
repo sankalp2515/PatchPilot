@@ -31,4 +31,4 @@ Docker was built and run without `.env` on a separate loopback port. Its health 
 
 ## Limits
 
-A successful regression suite does not prove arbitrary migration correctness, production safety, demand or event eligibility. Hashes are reproducible checksums, not signatures or tamper-proof attestations. Source quotation and topical matching do not formally establish causality. No public multi-user hosting, billing, payment execution or arbitrary repository repair is claimed. One upstream Starlette TestClient/httpx deprecation warning remains.
+A successful regression suite does not prove arbitrary migration correctness, production safety or customer demand. Hashes are reproducible checksums, not signatures or tamper-proof attestations. Source quotation and topical matching do not formally establish causality. No public multi-user hosting, billing, payment execution or arbitrary repository repair is claimed. One upstream Starlette TestClient/httpx deprecation warning remains.

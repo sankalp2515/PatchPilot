@@ -2,7 +2,7 @@
 
 ## 0.1.0 — 2026-10-12
 
-Initial PatchPilot local MVP and hackathon preparation release.
+Initial local preview release of PatchPilot.
 
 - Evidence-backed API adapter repair with SerpApi discovery, fetched official sources and literal citations.
 - Groq/NVIDIA live proposals and transparent deterministic replay.
@@ -12,6 +12,6 @@ Initial PatchPilot local MVP and hackathon preparation release.
 - SHA-256 artifact binding and a separate 20-case local Stripe invoice audit.
 - Optional content-excluding neatlogs SDK traces and genuine comparison readback.
 - Real Entire review checkpoint imported retrospectively; saved/read-back cfo.ai hypothesis scenarios.
-- Docker/native setup, API/architecture/user-flow documentation and demo/submission drafts.
+- Docker and native installation, API reference, architecture and workflow documentation.
 
-This release is local-only. Synthetic audits are not accuracy benchmarks; public event posting, video upload and accepted submission are external steps.
+This release supports local single-user use. Synthetic audits establish the tested fixture scope; they do not measure general migration accuracy. Public hosting and billing are not implemented.

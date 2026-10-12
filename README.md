@@ -10,7 +10,7 @@ A local AI agent that investigates API migrations, proposes a minimal Python pat
 ![React + TypeScript](https://img.shields.io/badge/React-TypeScript-3178C6)
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Get started](#get-started) · [User flows](docs/user-flows.md) · [Architecture](docs/architecture.md) · [API guide](docs/api-guide.md) · [Demo scripts](docs/demo-scripts.md)
+[Get started](#get-started) · [User flows](docs/user-flows.md) · [Architecture](docs/architecture.md) · [API guide](docs/api-guide.md) · [Documentation](docs/README.md)
 
 </div>
 
@@ -94,14 +94,16 @@ flowchart LR
 
 The agent plans, executes tools, selects context, persists state, retries failures and revises patches from verification feedback. It allows at most three proposal attempts and a 240-second run timeout. One JSON-to-JSON Python function runs through a restricted AST interpreter without `exec`, `eval`, imports, filesystem, shell or network access.
 
-## Partner evidence
+## Integrations
+
+SerpApi and a supported model provider power live investigations. neatlogs is optional runtime observability. Entire and cfo.ai support development context and business planning; users do not need them to run PatchPilot. See the [integration guide](docs/integrations.md) for setup and data handling. The records below describe validation of this release, not your current account connections.
 
 | Integration | Inspectable evidence | What it demonstrates |
 |---|---|---|
 | SerpApi | [Live verification](docs/live-verification.json), per-run provenance | Real Google discovery and fetched vendor context; outcomes depend on providers |
 | neatlogs | [Before/after readback](docs/evidence/neatlogs-improvement.json) | Account-backed trace readback: preserved baseline 5/5 acceptance, 6/20 audit; enhanced replay 5/5 and 20/20 |
 | Entire | [Checkpoint record](docs/evidence/entire-checkpoint.json) | Real read-only design-review session attached to commit `791e5a4`; imported retrospectively, not continuous earlier capture |
-| cfo.ai | [Saved model](docs/evidence/cfo-model.json), [economics](docs/economics.md) | Three illustrative USD scenarios, 45 selected cells, 44 nonempty cells, zero formula errors |
+| cfo.ai | [Saved model](docs/evidence/cfo-model.json), [economics](docs/business-model.md) | Three illustrative USD scenarios, 45 selected cells, 44 nonempty cells, zero formula errors |
 
 The neatlogs comparison is a synthetic same-contract adapter evaluation, not an LLM accuracy benchmark. cfo.ai assumptions are not measured revenue, customers or demand. Subscription concepts are hypotheses; billing is not implemented.
 
@@ -127,9 +129,9 @@ For browser checks, start the server, run `npx --prefix web playwright install c
 | [User flows](docs/user-flows.md) | Replay, live, custom incidents and recovery |
 | [API guide](docs/api-guide.md) | Routes, configuration, payloads and errors |
 | [Design](docs/design.md) | Visual system and responsive interface |
-| [Judging guide](docs/judging.md) | Eight agent focus areas, evidence and gaps |
-| [Submission kit](docs/submission-kit.md) | Entry copy, partner proof and submission steps |
-| [Demo scripts](docs/demo-scripts.md) | Narrated walkthroughs under three minutes |
+| [Integrations](docs/integrations.md) | Provider setup, tracing and development tools |
+| [Testing](docs/testing.md) | Regression checks, live validation and measured limitations |
+| [Security](SECURITY.md) | Data handling and execution boundaries |
 
 ## Scope and limitations
 
