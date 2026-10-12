@@ -21,3 +21,5 @@ Verification: 40 backend tests pass; four frontend tests pass; three browser reg
 
 Ruling: source acquisition may inspect adjacent official candidates and one release index; the three-source cap applies to accepted evidence, not every acquired candidate. Updated the system design to match.
 Ruling: local traces are preparation for neatlogs, ordinary Git commits are not Entire checkpoints, and the local business worksheet is not a cfo.ai plan. No external publishing/submission was authorized or performed.
+
+Publication follow-up: the user explicitly authorized publishing the committed application to https://github.com/sankalp2515/PatchPilot for Entire integration. The repository already existed, was public and empty, and the authenticated user had admin permission. Create `main` from the completed build, retain the original development branch locally, and publish the full actual commit history. Provider credentials, local SQLite data, environments and installed dependencies remain excluded. Partner integration and event submissions are still pending.

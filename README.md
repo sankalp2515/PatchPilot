@@ -2,6 +2,8 @@
 
 An AI agent that investigates a failing API adapter, discovers version-specific vendor evidence with SerpApi, proposes a minimal Python repair, and verifies it against protected acceptance cases.
 
+[Source repository](https://github.com/sankalp2515/PatchPilot)
+
 **Open the running workbench: http://127.0.0.1:8017**
 
 ![PatchPilot live repair workbench](docs/assets/live-repair-desktop.png)
@@ -38,7 +40,7 @@ Requires Python 3.12 or newer and Node.js 22.12 or newer. `uv` is recommended; s
 
 ## Credentials
 
-`.env` is local, ignored by Git, and loaded only on the server. The user's authorized sibling credential file was copied privately during this build. No key values are embedded in source, docs, screenshots, or the UI.
+`.env` is local, ignored by Git, and loaded only on the server. No key values are embedded in source, docs, screenshots, or the UI.
 
 For another installation, copy `.env.example` to `.env` and set `SERPAPI_API_KEY` and either `GROQ_API_KEY` or `NVIDIA_API_KEY`. Optional `LLM_PROVIDER` selects `groq` or `nvidia`; `LLM_MODEL` overrides its default. Existing Groq configuration uses `openai/gpt-oss-120b`. Replay does not require keys. Provider account quotas and model permissions are reported as real run failures, never silently replaced with replay.
 
@@ -83,4 +85,4 @@ Browser tests require a running server and Playwright Chromium (`npx playwright 
 - [Evaluation and verification](docs/testing.md): reproducible examples and limitations.
 - [Business assumptions](docs/economics.md): inputs to validate and model in cfo.ai.
 
-neatlogs, Entire and cfo.ai account-backed integration is deliberately **pending** morning setup. Local traces, Git commits and a financial worksheet are preparation, not sponsor compliance. Git history records the actual development work; hackathon eligibility and submission still need review. No repository has been pushed or submitted externally.
+neatlogs, Entire and cfo.ai account-backed integration is deliberately **pending** setup. Local traces, Git commits and a financial worksheet are preparation, not sponsor compliance. Git history records the actual development work; hackathon eligibility and submission still need review. The GitHub repository is available for integration work; no hackathon entry, demo upload or public social post has been submitted.

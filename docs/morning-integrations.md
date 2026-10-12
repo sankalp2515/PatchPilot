@@ -28,4 +28,4 @@ SerpApi live discovery is already implemented and tested. Search drives evidence
 
 ## Submission boundary
 
-This build has not created a public repository, uploaded a video, posted on X, or entered either event. Verify current deadlines, entry status and team eligibility before submitting. Review code provenance against neatHack's build-window rule. Do not backdate commits, fabricate partner activity or describe deterministic replay as a live agent run.
+The user authorized publishing the code to https://github.com/sankalp2515/PatchPilot on `main` for integration work. No demo video has been uploaded, no X post has been published, and neither event has been entered. Verify current deadlines, entry status and team eligibility before submitting. Review code provenance against neatHack's build-window rule. Do not backdate commits, fabricate partner activity or describe deterministic replay as a live agent run.
