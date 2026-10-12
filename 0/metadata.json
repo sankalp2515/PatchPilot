@@ -1,0 +1,21 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4QNEWXG1454P3MWJM7EDW0J",
+  "session_id": "01a12f54-fb4d-7283-a536-bc150f398342",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-12T09:00:23.1546266Z",
+  "checkpoints_count": 1,
+  "files_touched": null,
+  "agent": "Codex",
+  "model": "",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 23731,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 26880,
+    "output_tokens": 520,
+    "api_call_count": 2
+  },
+  "kind": "agent_review",
+  "review_prompt": "Read ONLY docs/submission-design.md, docs/superpowers/plans/2026-10-12-submission.md and pyproject.toml in this PatchPilot repo. Do not read .env, .data, user configuration, credentials or other files; do not modify files or call network tools. Provide a short review of the planned evidence-led repair product and the Python 3.12 neatlogs compatibility choice, identify one concrete risk and mitigation. This read-only design review will be attached as genuine Entire development evidence. Do not claim you used Entire hooks."
+}
