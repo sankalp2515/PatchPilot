@@ -10,7 +10,7 @@
 ![React + TypeScript](https://img.shields.io/badge/React-TypeScript-3178C6)
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Watch the 3-minute demo](https://x.com/WanjariSankalp/status/2109713349017747529) · [Run locally](#run-locally) · [How the agent works](#how-the-agent-works) · [API guide](docs/api-guide.md)
+[Watch the 3-minute demo](https://x.com/WanjariSankalp/status/2109756468170027470) · [Run locally](#run-locally) · [How the agent works](#how-the-agent-works) · [API guide](docs/api-guide.md)
 
 </div>
 
