@@ -9,6 +9,8 @@ The local API is served at [127.0.0.1:8017](http://127.0.0.1:8017). The machine-
 | GET | `/api/health` | Service identity and health |
 | GET | `/api/config` | Readiness, provider/model, partner status and limits; no keys |
 | GET | `/api/examples` | Sanitized replay/live incident templates |
+| GET | `/api/showcase` | Bundled saved live investigation and integration readbacks; no provider calls |
+| GET | `/api/showcase/report` | Download the saved live investigation's Markdown report |
 | POST | `/api/runs` | Validate and queue investigation; 202 |
 | GET | `/api/runs` | Run summaries |
 | GET | `/api/runs/{id}` | Persisted full run, events, attempts, evidence and results |

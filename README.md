@@ -48,6 +48,8 @@ This installs dependencies, builds the UI and starts the local service. Setup an
 
 ### Try the recovery example
 
+For a guided introduction, open the **Product walkthrough** from the homepage or visit [/app/showcase](http://127.0.0.1:8017/app/showcase). It contains a complete saved live investigation: real SerpApi discovery, fetched official sources, model proposal, verification and authenticated integration readbacks. It uses synthetic historical fixtures and makes no new provider calls while you inspect it. The persistent **Saved live investigation** label distinguishes this record from starting a fresh run.
+
 1. Choose **Recovery from an incomplete repair** in the workspace.
 2. Leave **Recorded replay** selected and start. The initial proposal misses cases; the agent uses actual failures to revise it.
 3. Inspect **Evidence**, **Proposed repair**, **Acceptance tests**, **Activity**, and **Repair proof**.

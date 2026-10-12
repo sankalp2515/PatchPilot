@@ -1,46 +1,16 @@
 {
   "source": "Authenticated exact neatlogs live trace readback",
-  "trace_id": "bbe84311a3a7c74c620eae98a0f4c841",
+  "trace_id": "e3bcdf57cea9d4f57d361201a272378d",
   "status": "success",
   "span_count": 13,
   "prompt_tokens": 2055,
-  "completion_tokens": 1231,
-  "total_tokens": 3286,
+  "completion_tokens": 1206,
+  "total_tokens": 3261,
   "spans": [
-    {
-      "name": "verification.baseline",
-      "type": "tool_call",
-      "id": "7840b4da1142593f",
-      "parent": "88a1010d4b17da6e",
-      "metrics": {
-        "outcome": "failed",
-        "passed": 0,
-        "total": 5
-      }
-    },
-    {
-      "name": "tools.fetch",
-      "type": "tool_call",
-      "id": "7484f5361ea69ec1",
-      "parent": "9b67dad5c3c7cfa8",
-      "metrics": {
-        "outcome": "fetched"
-      }
-    },
-    {
-      "name": "tools.research",
-      "type": "tool_call",
-      "id": "9b67dad5c3c7cfa8",
-      "parent": "88a1010d4b17da6e",
-      "metrics": {
-        "outcome": "found",
-        "source_count": 1
-      }
-    },
     {
       "name": "agent.run",
       "type": "workflow",
-      "id": "88a1010d4b17da6e",
+      "id": "c58b60105f336583",
       "parent": null,
       "metrics": {
         "mode": "live",
@@ -51,10 +21,40 @@
       }
     },
     {
+      "name": "verification.baseline",
+      "type": "tool_call",
+      "id": "44f486f7f1ac27a1",
+      "parent": "c58b60105f336583",
+      "metrics": {
+        "outcome": "failed",
+        "passed": 0,
+        "total": 5
+      }
+    },
+    {
       "name": "tools.fetch",
       "type": "tool_call",
-      "id": "d09e53d20064b190",
-      "parent": "9b67dad5c3c7cfa8",
+      "id": "ee2156cea17ce190",
+      "parent": "045d2738b6c0f1fb",
+      "metrics": {
+        "outcome": "fetched"
+      }
+    },
+    {
+      "name": "tools.research",
+      "type": "tool_call",
+      "id": "045d2738b6c0f1fb",
+      "parent": "c58b60105f336583",
+      "metrics": {
+        "outcome": "found",
+        "source_count": 1
+      }
+    },
+    {
+      "name": "tools.fetch",
+      "type": "tool_call",
+      "id": "3d793abf3d54c7cf",
+      "parent": "045d2738b6c0f1fb",
       "metrics": {
         "outcome": "fetched"
       }
@@ -62,8 +62,8 @@
     {
       "name": "tools.fetch",
       "type": "tool_call",
-      "id": "9eb2bf4b0e75d371",
-      "parent": "9b67dad5c3c7cfa8",
+      "id": "dda729bfd91b8db9",
+      "parent": "045d2738b6c0f1fb",
       "metrics": {
         "outcome": "fetched"
       }
@@ -71,8 +71,8 @@
     {
       "name": "tools.fetch",
       "type": "tool_call",
-      "id": "a33ef0a730a9798b",
-      "parent": "9b67dad5c3c7cfa8",
+      "id": "006dad957216ed53",
+      "parent": "045d2738b6c0f1fb",
       "metrics": {
         "outcome": "fetched"
       }
@@ -80,8 +80,8 @@
     {
       "name": "tools.fetch",
       "type": "tool_call",
-      "id": "a0027ac54fe7c915",
-      "parent": "9b67dad5c3c7cfa8",
+      "id": "ced819cb1fb7a711",
+      "parent": "045d2738b6c0f1fb",
       "metrics": {
         "outcome": "fetched"
       }
@@ -89,8 +89,8 @@
     {
       "name": "tools.fetch",
       "type": "tool_call",
-      "id": "5a0cffe48765cc02",
-      "parent": "9b67dad5c3c7cfa8",
+      "id": "ffafd4cca783a220",
+      "parent": "045d2738b6c0f1fb",
       "metrics": {
         "outcome": "fetched"
       }
@@ -98,22 +98,22 @@
     {
       "name": "openai/gpt-oss-120b",
       "type": "llm",
-      "id": "3673733333e25ef5",
-      "parent": "d2d344abc2dad3b2",
+      "id": "ab4e8b6ad5f5caec",
+      "parent": "2d89ca2f0b3a1168",
       "metrics": {
-        "completion_tokens": 1231,
+        "completion_tokens": 1206,
         "model": "openai/gpt-oss-120b",
         "outcome": "generated",
         "prompt_tokens": 2055,
         "provider": "groq",
-        "tokens": 3286
+        "tokens": 3261
       }
     },
     {
       "name": "tools.propose",
       "type": "tool_call",
-      "id": "d2d344abc2dad3b2",
-      "parent": "88a1010d4b17da6e",
+      "id": "2d89ca2f0b3a1168",
+      "parent": "c58b60105f336583",
       "metrics": {
         "attempt": 1,
         "outcome": "generated",
@@ -123,8 +123,8 @@
     {
       "name": "verification.acceptance",
       "type": "tool_call",
-      "id": "d2222bcebdd13e13",
-      "parent": "88a1010d4b17da6e",
+      "id": "4cd3a970044375e1",
+      "parent": "c58b60105f336583",
       "metrics": {
         "outcome": "passed",
         "passed": 5,
@@ -134,8 +134,8 @@
     {
       "name": "verification.audit",
       "type": "tool_call",
-      "id": "a25f11db5f20e3eb",
-      "parent": "88a1010d4b17da6e",
+      "id": "2543e2b31d4403fd",
+      "parent": "c58b60105f336583",
       "metrics": {
         "audit_passed": 20,
         "audit_total": 20,

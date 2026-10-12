@@ -71,3 +71,21 @@ def test_untrusted_host_cannot_read_or_mutate_local_workspace(tmp_path):
             ).status_code
             == 400
         )
+
+
+def test_saved_live_walkthrough_needs_no_keys_or_new_runs(tmp_path):
+    with client(tmp_path) as api:
+        response = api.get("/api/showcase")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["kind"] == "saved_live_investigation"
+        assert data["run"]["input"]["mode"] == "live"
+        assert data["run"]["status"] == "verified"
+        assert data["run"]["proof"]["audit"]["passed"] == 20
+        assert data["run"]["sources"][0]["provenance"] == "serpapi_live_fetched"
+        assert data["live_trace"]["trace_id"] == data["run"]["telemetry"]["trace_id"]
+        assert api.get("/api/runs").json() == []
+        report = api.get("/api/showcase/report")
+        assert report.status_code == 200
+        assert "Saved live investigation" in report.text
+        assert data["run"]["id"] in report.text

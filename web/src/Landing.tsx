@@ -24,6 +24,7 @@ export default function Landing() {
         </a>
         <nav aria-label="Site navigation">
           <a href="#workflow">How it works</a>
+          <a href="/app/showcase">Product walkthrough</a>
           <a href="#proof">The proof</a>
           <a href="#pricing">Pricing</a>
         </nav>

@@ -14,6 +14,7 @@ from .observability import Telemetry
 from .providers import Tools
 from .reports import markdown_report
 from .schemas import IncidentRequest
+from .showcase import load_showcase
 from .store import TERMINAL, Store
 
 
@@ -112,6 +113,25 @@ def create_app(settings=None):
     @app.get("/api/examples")
     def example_list():
         return examples()
+
+    def saved_investigation():
+        try:
+            return load_showcase()
+        except (OSError, ValueError, KeyError):
+            raise HTTPException(503, "Saved investigation is unavailable or damaged") from None
+
+    @app.get("/api/showcase")
+    def showcase():
+        return saved_investigation()
+
+    @app.get("/api/showcase/report")
+    def showcase_report():
+        run = saved_investigation()["run"]
+        return PlainTextResponse(
+            f"# Saved live investigation\n\nRun: {run['id']}\n\n"
+            "No new provider calls are made when viewing this record.\n\n" + markdown_report(run),
+            headers={"Content-Disposition": 'attachment; filename="patchpilot-saved-live-report.md"'},
+        )
 
     @app.post("/api/runs", status_code=202)
     async def create(request: IncidentRequest):

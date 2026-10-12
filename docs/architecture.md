@@ -38,6 +38,8 @@ flowchart TB
 
 Backend files are under `patchpilot/`. Entire and cfo.ai support development context and business planning; neither is required in the repair runtime. Replay needs no external accounts.
 
+The product walkthrough at `/app/showcase` reads a bundled snapshot through `/api/showcase`. The capture script accepts only a verified live run of the unchanged public synthetic fixture, obtains authenticated trace readback, checks configured secrets and stores a checksummed envelope in `patchpilot/assets/showcase.json`. This read-only view neither creates investigations nor calls providers. Saved source text, proposals, verification results and integration records remain inspectable offline while the local service is running. The UI distinguishes the saved record from fresh live execution and labels the separate replay improvement experiment.
+
 ## Trust boundaries
 
 Incident text, source pages and model output are untrusted. Input validation rejects obvious credential fields/token patterns, but cannot detect every secret. Acquisition accepts configured official HTTPS hosts, validates redirects and bounds responses. Snippets alone cannot unlock repair. Version/context checks and literal quote membership constrain citations.

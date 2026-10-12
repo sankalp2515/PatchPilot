@@ -1,12 +1,12 @@
 {
-  "id": "940b3191ab3b44ed8628c1221085df45",
+  "id": "b7a1d37495ec459dbcbcdaafad4d1597",
   "status": "verified",
-  "diagnosis": "The 2025\u201103\u201131.basil version removed the top\u2011level `payment_intent` field from the Invoice object and introduced a `payments` array that contains individual payment objects. The original adapter accessed `invoice[\"payment_intent\"]`, causing a KeyError. The repaired function follows the independent audit policy: it validates that `invoice.payments` is a dict and that `payments.data` is a list, then iterates each entry, only extracting IDs from items whose `payment.type` is exactly \"payment_intent\" and whose `payment_intent` pointer is a non\u2011empty string or an object with a non\u2011empty `id`. All other cases return an empty list or skip the item, matching the required contract.",
+  "diagnosis": "The original adapter accessed the removed `payment_intent` field on the Invoice object, which raises a KeyError after upgrading to the 2025\u201103\u201131.basil version. The new version introduces an `invoice.payments` array that holds one or more payment objects. The repaired function follows the independent audit policy: it validates the presence and types of `invoice.payments` and its `data` list, skips malformed entries, only processes items whose `payment.type` is exactly \"payment_intent\", and extracts a non\u2011empty string ID either directly or from an expanded object\u2019s `id`. This yields the required `payment_intent_ids` list while preserving order and duplicates.",
   "metrics": {
     "search_calls": 1,
     "model_calls": 1,
-    "tokens": 3286,
-    "elapsed_seconds": 6.45
+    "tokens": 3261,
+    "elapsed_seconds": 7.08
   },
   "baseline": [
     {
@@ -153,8 +153,8 @@
         "binding_hash": "7ab4183a87f4e0aaafa260c21b5b61aa70052e6bd2b9fc137a544da1e3372549"
       }
     ],
-    "patch_hash": "31c524c2a4f88ff29608c883b1718f14822875cc2c97405395096dc63b020dde",
-    "diff_hash": "54c3816a0d3654cbad8dd8c5cbab38e684c325d26b4dd643ab0adc280c0e3ef6",
+    "patch_hash": "36b76f33e819d657193c2f4dabf95e7d4df1fdae663e208d30de6c89fb5f0b6a",
+    "diff_hash": "92b275a88bfd53701c627ce3abae3e10e1766f2b4472fdcbff40eaf1e18f7b29",
     "baseline_hash": "9009e51438ecdf44141e5a505d901ce57885291910f223b89d6c830e1c4b314b",
     "citations_hash": "96f84c1da909663ea535dcb9384cc5e9a6f710cfabea3e405824931ff0b043cc",
     "acceptance_hash": "5d4bcb1ed69a361a702f41130f0145c837e7e6975b92fa86a7fa42fd882a2f79",
@@ -487,11 +487,11 @@
       "policy": "Local Stripe invoice fixture normalization: retain nonempty string IDs (including expanded object IDs); ignore malformed values. Not a vendor guarantee."
     },
     "verified_scope": "Supplied acceptance cases in the restricted JSON adapter interpreter plus the local Stripe invoice counterexample fixture policy.",
-    "proof_hash": "b454e38ea2f78019debf8c6efd008f803a341904d5294254de76d8f976ded962"
+    "proof_hash": "48829e5e34c8c102bbbee4bc933cb575f7d7718b74e27abbc22f557384e70284"
   },
   "telemetry": {
     "status": "enabled",
-    "trace_id": "bbe84311a3a7c74c620eae98a0f4c841"
+    "trace_id": "e3bcdf57cea9d4f57d361201a272378d"
   },
   "limitations": [
     "Supplied acceptance cases in the restricted JSON adapter interpreter plus the local Stripe invoice counterexample fixture policy.",

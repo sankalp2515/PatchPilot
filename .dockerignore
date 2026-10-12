@@ -2,6 +2,7 @@
 .venv
 .git
 .data
+.private
 web/node_modules
 web/dist
 tests

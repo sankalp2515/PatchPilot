@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import Landing from "./Landing";
+import Showcase from "./Showcase";
 import { api, post } from "./api";
 import {
   terminal,
@@ -617,6 +618,7 @@ function Workspace() {
 }
 
 export default function App() {
+  if (window.location.pathname === "/app/showcase") return <Showcase />;
   return window.location.pathname === "/app" ||
     window.location.pathname.startsWith("/app/") ? (
     <Workspace />
