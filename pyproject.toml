@@ -1,8 +1,8 @@
 [project]
 name = "patchpilot"
 version = "0.1.0"
-requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "httpx>=0.28,<1", "pydantic-settings>=2.8,<3", "beautifulsoup4>=4.13,<5", "python-dotenv>=1,<2"]
+requires-python = ">=3.12,<3.14"
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "httpx>=0.28,<1", "pydantic-settings>=2.8,<3", "beautifulsoup4>=4.13,<5", "python-dotenv>=1,<2", "neatlogs==1.4.26"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "pytest-asyncio>=0.25,<2", "ruff>=0.11,<1"]
