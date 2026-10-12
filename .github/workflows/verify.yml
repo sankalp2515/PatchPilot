@@ -36,7 +36,8 @@ jobs:
       - name: Start key-free local service
         run: |
           mkdir -p .data
-          uv run uvicorn patchpilot.main:app --host 127.0.0.1 --port 8017 > .data/ci-server.log 2>&1 &
+          .venv/bin/python -m uvicorn patchpilot.main:app --host 127.0.0.1 --port 8017 > .data/ci-server.log 2>&1 &
+          echo $! > .data/ci-server.pid
           for i in $(seq 1 40); do
             if curl --fail --silent http://127.0.0.1:8017/api/health; then exit 0; fi
             sleep 1
@@ -48,6 +49,12 @@ jobs:
       - name: Browser journey
         working-directory: web
         run: npm run test:e2e
+      - name: Stop local service
+        if: always()
+        run: |
+          if [ -f .data/ci-server.pid ]; then
+            kill "$(cat .data/ci-server.pid)" || true
+          fi
       - name: Preserve diagnostic logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
