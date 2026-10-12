@@ -6,6 +6,7 @@
 A local AI agent that investigates API migrations, proposes a minimal Python patch, and packages the evidence with its tested scope.
 
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+[![Verify](https://github.com/sankalp2515/PatchPilot/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/sankalp2515/PatchPilot/actions/workflows/verify.yml)
 ![React + TypeScript](https://img.shields.io/badge/React-TypeScript-3178C6)
 [![MIT license](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 

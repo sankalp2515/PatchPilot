@@ -23,8 +23,10 @@ Absent/failed telemetry must not break repair; invalid JSON/payment pointers mus
 - [x] 4. Build landing page, premium design system and guided workspace; UI tests, responsive browser verification.
 - [x] 5. Create and read back cfo.ai financial scenario; capture genuine Entire development checkpoint.
 - [x] 6. Publish clear install/run documentation, architecture, design rationale, sponsor evidence, judging assessment and demo/submission kits.
-- [ ] 7. Run backend/frontend/e2e/live checks, review changes, fix material findings, commit and push public repository.
+- [x] 7. Run backend/frontend/e2e/live checks, review changes, fix material findings, commit and push public repository.
 
 ## Progress and rulings
 Ruling: work in the user's explicitly selected checkout so the existing service, `.env` and Entire repository context are retained; use a `codex/submission-ready` branch for implementation.
 Ruling: the user's continuous-build authorization overrides routine skill approval handoffs; preserve design and plan artifacts before implementation.
+
+Completion: final reviewer found one Important replay-scope issue, reproduced and fixed with regression coverage. Focused rechecks found no remaining Critical/Important findings. Local verification passed 86 backend, 8 UI and 4 browser tests, lint/format/build and key-free Docker smoke. Final real SerpApi/Groq run passed 5 acceptance + 20 scoped audit cases on its first proposal; failed provider runs remain preserved. Implementation commit `712c35d` was published to public `main` and GitHub's Linux verification checks passed. Sponsor receipts, design rationale, architecture and two recording scripts are included. Video recording/upload, actual event public post and final submission remain entrant-owned external steps.
