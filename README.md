@@ -79,7 +79,7 @@ The execution boundary is deliberately narrow: one JSON-to-JSON Python function 
 | Validation | Observed result | Inspect the record |
 |---|---|---|
 | Live Stripe investigation | Real SerpApi discovery and model proposal; **0/5 → 5/5** protected cases, **20/20** applicable audit cases | [Live run receipt](docs/live-verification.json) |
-| Live repair recovery, shown below | First proposal passed acceptance but only **14/20 audit cases**; a second proposal passed **20/20** | [Investigation screenshot](docs/assets/repair-proof-desktop.png) |
+| Live repair recovery | First proposal passed acceptance but only **14/20 audit cases**; a second proposal passed **20/20** | [Investigation screenshot](docs/assets/repair-proof-desktop.png) |
 | Controlled adapter comparison | Preserved adapter: **5/5 acceptance, 6/20 audit**. Improved recovery example: **5/5, 20/20**, after two attempts | [Trace comparison and readback](docs/evidence/neatlogs-improvement.json) |
 | Automated regression checks | Provider failure handling, policy boundaries, agent outcomes and UI behavior | [CI workflow runs](https://github.com/sankalp2515/PatchPilot/actions/workflows/verify.yml) · [Testing guide](docs/testing.md) |
 
